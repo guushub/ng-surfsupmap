@@ -6,7 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./map-panel-left.component.css']
 })
 export class MapPanelLeftComponent implements OnInit {
-  public show = true;
+  public show = false;
 
   constructor() { }
 
