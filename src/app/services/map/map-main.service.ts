@@ -25,8 +25,7 @@ export class MapMainService {
   setMap(divId: string) {
     // Note that we can't set the map itself yet when constructing/initializing this service.  
     // The dom is not ready yet, so call this from a component's 'ngOnInit()'. Something like:
-    // this.mapMainService.setMap("map-main"); 
-    
+    // this.mapMainService.setMap("map-main");   
     const map = L.map(divId, {
         zoomControl: false,
         center: L.latLng(54, 5),
@@ -36,11 +35,10 @@ export class MapMainService {
 
     L.control.zoom({ position: "topright" }).addTo(map);
     L.control.layers(this.baseMaps).addTo(map);
-    L.control.scale().addTo(map);
+    //L.control.scale().addTo(map);
 
     this.map = map;
 
   }
    
-
 }
