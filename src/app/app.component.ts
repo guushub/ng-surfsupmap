@@ -5,9 +5,12 @@ import { MapPanelLeftComponent } from './components/map-panel/map-panel-left/map
 
 // services
 import { MapMainService } from './services/map/map-main.service';
+import { WaterinfoOldService } from './services/waterinfo/waterinfo-old.service';
 
 // Stuff
-import { WaterInfoMarker, IWaterInfoRecord } from './map-elements/marker/water-info-marker/water-info-marker';
+//import * as WaterInfoMarker from './map-elements/marker/water-info-marker/water-info-marker';
+import * as WaterInfoMarker from './map-elements/map-content/water-info-old/water-info-marker';
+import * as Symbology from './map-elements/symbology/symbology';
 import { MapPane } from './map-elements/map-pane/map-pane';
 
 @Component({
@@ -18,7 +21,7 @@ import { MapPane } from './map-elements/map-pane/map-pane';
 export class AppComponent {
   title = 'app';
   
-  constructor (private mapMainService: MapMainService) {
+  constructor (private mapMainService: MapMainService, private waterInfoOldService: WaterinfoOldService) {
 
   }
 
@@ -29,18 +32,39 @@ export class AppComponent {
     const testPane = new MapPane("testMarkers", 610);
     testPane.add(this.mapMainService.map);
 
-    const testData: IWaterInfoRecord = {
-      direction: 270,
-      value: 140,
-      location: L.latLng(54, 5)
+    const testSymbology: Symbology.ISymbologyClassifiedOptions = {
+      min: 0,
+      max: 400,
+      nClasses: 11
     }
 
-    const testMarker = new WaterInfoMarker("testMarker1", testData, "testMarkers", testPane);
+    this.waterInfoOldService.getWaterInfoRecords()
+    .then(waterInfoRecords => {
+      waterInfoRecords.forEach((record, i) => { 
 
+
+        const testMarker = WaterInfoMarker.get(`marker-${i}`, record, "testMarkers", testSymbology);
+        testMarker.addTo(this.mapMainService.map);
+        testMarker.bindPopup("Hallo");
+
+      });
+
+    });
+
+    
+
+    
+        // const testData: WaterInfoOld.IWaterInfoRecord = {
+        //   direction: 270,
+        //   value: 140,
+        //   location: L.latLng(54, 5)
+        // }
+    
     //werkt nog niet:
     //testMarker.bindPopup("<p>Hallo</p>").openPopup();
 
-    testMarker.addTo(this.mapMainService.map);
+
+
   }
 
 }
