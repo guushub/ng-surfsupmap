@@ -7,6 +7,11 @@ import { latLng } from 'leaflet';
 
 import { IWaterInfoRecord, IRwsFeature } from '../../map-elements/map-content/water-info-old/water-info-record';
 
+interface IWaterInfoRecords {
+  waves: IWaterInfoRecord[];
+  wind: IWaterInfoRecord[];
+}
+
 @Injectable()
 export class WaterinfoOldService {
 
@@ -14,12 +19,16 @@ export class WaterinfoOldService {
   private waterInfoJsonUrl = '/assets/water-info-data.json';
 
   constructor(private http: Http) { }
-  getWaterInfoRecords(): Promise<IWaterInfoRecord[]> {
+  getWaterInfoRecords(): Promise<IWaterInfoRecords> {
     return this.http.get(this.waterInfoJsonUrl)
       .toPromise()
       .then(response => {
         const rwsFeatures = response.json().features as IRwsFeature[];
-        return this.transformRwsFeature(rwsFeatures);
+        const results: IWaterInfoRecords = {waves: [], wind: []};
+        results.waves = this.transformRwsFeatures("H1d3", "Th0_B0", rwsFeatures);
+        results.wind = this.transformRwsFeatures("WC10", "WR10", rwsFeatures);
+
+        return results;
       })
       .catch(this.handleError);
   }
@@ -29,7 +38,7 @@ export class WaterinfoOldService {
     return Promise.reject(error.message || error);
   }
 
-  private transformRwsFeature(rwsFeatures: IRwsFeature[], nanValue: number = 99999) {
+  private transformRwsFeatures(parHeight: string, parDirection: string, rwsFeatures: IRwsFeature[], nanValue: number = 99999) {
     let waterInfoRecords: IWaterInfoRecord[] = [];
     const locationNames = rwsFeatures.map((feature) => { return feature.loc });
 
@@ -38,13 +47,11 @@ export class WaterinfoOldService {
 
     locationsToGet.forEach((locationCode) => {
       const locationVals = rwsFeatures.filter(feature => locationCode.toLowerCase() === feature.loc.toLowerCase());
-      const locationDirection = locationVals.filter(feature => feature.par === "Th0_B0");
-      const locationHeight = locationVals.filter(feature => feature.par === "H1d3");
+      const locationDirection = locationVals.filter(feature => feature.par === parDirection);
+      const locationHeight = locationVals.filter(feature => feature.par === parHeight);
 
       if (locationHeight.length > 0 && locationDirection.length > 0) {
-        const rd = [parseFloat(locationHeight[0].location.lat), parseFloat(locationHeight[0].location.lon)];
-        //var coords = proj4(this._projection, "EPSG:4326", [rd[1], rd[0]]);
-        const coords = [rd[1], rd[0]];
+        const coords = [parseFloat(locationHeight[0].location.lon), parseFloat(locationHeight[0].location.lat)];
 
         if (locationHeight[0].meettijd === locationDirection[0].meettijd && locationHeight[0].meettijd != null) {
           // Only when meettijd of all sensors is equal, then its a valid record for our purpous
@@ -59,5 +66,4 @@ export class WaterinfoOldService {
 
     return waterInfoRecords;
   }
-
 }
