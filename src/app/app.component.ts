@@ -14,6 +14,7 @@ import * as WaterInfoMarker from './map-elements/map-content/water-info-old/wate
 import * as WaterInfoIcon from './map-elements/map-content/water-info-old/water-info-icon';
 import * as Symbology from './map-elements/symbology/symbology';
 import { MapPane } from './map-elements/map-pane/map-pane';
+import { WaterinfoService } from './services/waterinfo/waterinfo.service';
 
 @Component({
   selector: 'app-root',
@@ -23,142 +24,32 @@ import { MapPane } from './map-elements/map-pane/map-pane';
 export class AppComponent {
   title = 'app';
   
-  constructor (private mapMainService: MapMainService, private waterInfoOldService: WaterinfoOldService) {
+  constructor (private mapMainService: MapMainService, 
+    private waterInfoOldService: WaterinfoOldService,
+    private waterInfoService: WaterinfoService) {
 
   }
 
   ngOnInit() {
     // Div should be ready, so now we can finally construct the map.
+    this.waterInfoService.getLatest("Significante___20golfhoogte___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20500___20mHz___20in___20cm")
+    .subscribe((data) => {
+        console.log(data);
+    }, (err) => {
+        console.log(err);
+    });
+
     this.mapMainService.setMap("map-main");
 
-    const wavesPane = new MapPane("wavesPane", 610);
-    wavesPane.add(this.mapMainService.map);
+    const wavesSymbology = Symbology.getSymbologyByTheme(
+        Symbology.ThemeType.cm, 
+        Symbology.ThemeColor.purple
+    )   
 
-    const windPane = new MapPane("windPane", 605);
-    windPane.add(this.mapMainService.map);
-
-    const wavesSymbology: Symbology.IWaterInfoSymbologyCalculated = {
-      getIconSize: (x) => { 
-            if (x <= 30) {
-                // Flat
-                return 20;
-
-            } else if (x > 30 && x <= 49) {
-                // Knee high
-                return 30;
-
-            } else if (x > 49 && x <= 75) {
-                // Waist- high
-                return 35;
-
-            } else if (x > 75 && x <= 91) {
-                // Waist + high
-                return 40;
-
-            } else if (x > 91 && x <= 122) {
-                // Shoulder high
-                return 47;
-
-            } else if (x > 122 && x <= 152) {
-                // Head high
-                return 62;
-
-            } else if (x > 152 && x <= 183) {
-                // 1 foot Overhead
-                return 70;
-                //return 70;
-
-            } else if (x > 183 && x <= 244) {
-                // 3 foot Overhead
-                return 75;
-                //return 80;
-
-            } else if (x > 244 && x <= 305) {
-                // Double overhead
-                return 80;
-                //return 100;
-
-            } else if (x > 305 && x <= 400) {
-                // Double overhad +
-                return 85;
-                //return 110;
-
-            } else if (x > 400) {
-                // Massive
-                return 90;
-                //return 120;
-            }
-
-            return 5;
-      },
-      borderColor: "#b5a7ee",
-      fillColor: "#ffffff",
-      labelFontFamily: "Verdana",
-      labelFontSize: "0.9em"
-    }
-
-    const windSymbology: Symbology.IWaterInfoSymbologyCalculated = {
-      getIconSize: (x) => { 
-            // bron: https://nl.wikipedia.org/wiki/Schaal_van_Beaufort
-            if (x <= 0.2) {
-                // Bft 0
-                return 10;
-
-            } else if (x > 0.2 && x <= 1.5) {
-                // Bft 1
-                return 20;
-
-            } else if (x > 1.5 && x <= 3.3) {
-                // Bft 2
-                return 25;
-
-            } else if (x > 3.3 && x <= 5.4) {
-                // Bft 3
-                return 35;
-
-            } else if (x > 5.4 && x <= 7.9) {
-                // Bft 4
-                return 45;
-
-            } else if (x > 7.9 && x <= 10.7) {
-                // Bft 5
-                return 58;
-
-            } else if (x > 10.7 && x <= 13.8) {
-                // Bft 6
-                return 65;
-
-            } else if (x > 13.8 && x <= 17.1) {
-                // Bft 7
-                return 75;
-
-            } else if (x > 17.1 && x <= 20.7) {
-                // Bft 8
-                return 85;
-
-            } else if (x > 20.7 && x <= 24.4) {
-                // Bft 9
-                return 95;
-
-            } else if (x > 24.4 && x <= 28.4) {
-                // Bft 10
-                return 100;
-
-            } else if (x > 28.4 && x <= 32.6) {
-                // Bft 11
-                return 105;
-
-            } else if (x > 32.6) {
-                // Bft 12
-                return 110;
-            }
-            return 2;
-      },
-      borderColor: "#ffa461",
-      fillColor: "#ffffff",
-      labelFontFamily: "Verdana",
-      labelFontSize: "0.8em"
-    }    
+    const windSymbology = Symbology.getSymbologyByTheme(
+        Symbology.ThemeType["m/s"], 
+        Symbology.ThemeColor.orange
+    )   
 
     const waveIconLegend = WaterInfoIcon.get({
         id: `wave-marker-legend`,
@@ -187,7 +78,7 @@ export class AppComponent {
         
         waterInfoRecords.waves.forEach((record, i) => { 
             if(!isNaN(record.value) && !isNaN(record.direction)) {
-                const waveMarker = WaterInfoMarker.get(`wave-marker-${i}`, record, "waveMarkers", wavesSymbology, wavesPane);
+                const waveMarker = WaterInfoMarker.get(`wave-marker-${i}`, record, "waveMarkers", wavesSymbology, "waves");
                 waveMarkers.push(waveMarker);
                 //waveMarker.addTo(this.mapMainService.map);
                 // testMarker.bindPopup("Hallo");
@@ -197,24 +88,15 @@ export class AppComponent {
         waterInfoRecords.wind.forEach((record, i) => { 
             if(!isNaN(record.value) && !isNaN(record.direction)) {
                 record.value = parseFloat(record.value.toFixed(1));
-                const windMarker = WaterInfoMarker.get(`wind-marker-${i}`, record, "windMarkers", windSymbology, windPane);
+                const windMarker = WaterInfoMarker.get(`wind-marker-${i}`, record, "windMarkers", windSymbology, "wind");
                 windMarkers.push(windMarker);
                 //windMarker.addTo(this.mapMainService.map);
                 //testMarker.bindPopup("Hallo");
             }
         });
 
-        const waveLayer = L.layerGroup(waveMarkers);
-        waveLayer.addTo(this.mapMainService.map);
-
-        const windLayer = L.layerGroup(windMarkers);
-        windLayer.addTo(this.mapMainService.map);
-
-        let mapOverlays = {};
-        mapOverlays[layerDescriptionWave] = waveLayer;
-        mapOverlays[layerDescriptionWind] = windLayer;
-
-        L.control.layers({}, mapOverlays).addTo(this.mapMainService.map);
+        this.mapMainService.addLayer("waves", layerDescriptionWave, 610, waveMarkers, wavesSymbology);
+        this.mapMainService.addLayer("wind", layerDescriptionWind, 605, windMarkers, windSymbology);
 
     });
 

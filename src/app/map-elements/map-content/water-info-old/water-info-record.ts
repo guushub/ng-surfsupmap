@@ -1,5 +1,5 @@
 
-export interface IWaterInfoRecord {
+export interface WaterInfoRecord {
         location: L.LatLngExpression;
         value: number;
         direction: number;

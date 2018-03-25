@@ -1,11 +1,19 @@
 import { Injectable } from '@angular/core';
 import * as L from 'leaflet';
+import { WaterInfoSymbologyCalculated } from '../../map-elements/symbology/symbology';
+
+interface WaterinfoLayer {
+  name: string;
+  layer: L.LayerGroup;
+  symbology: WaterInfoSymbologyCalculated;
+}
 
 @Injectable()
 export class MapMainService {
     public map: L.Map;
     public baseMaps: L.Control.LayersObject;
-
+    private layers: {[layerId: string] : WaterinfoLayer} = {};
+    private layerControl: L.Control.Layers;
 
   constructor() { 
     this.baseMaps = {
@@ -36,8 +44,6 @@ export class MapMainService {
     });
 
     L.control.zoom({ position: "topleft" }).addTo(map);
-    //L.control.layers(this.baseMaps).addTo(map);
-    //L.control.scale().addTo(map);
 
     L.control.attribution({
         position: 'bottomright'
@@ -47,7 +53,29 @@ export class MapMainService {
     .addTo(map);
 
     this.map = map;
-        
+    this.layerControl = L.control.layers();
+    this.map.addControl(this.layerControl);
   }
-   
+
+  addLayer(layerId: string, name: string, zIndex: number, markers: L.Marker[], symbology: WaterInfoSymbologyCalculated) {
+    //TODO more symbology type
+    const layer = { layer: L.layerGroup(markers), name: name, symbology: symbology};
+    this.layers[layerId] = layer;
+
+    this.addPane(layerId, zIndex);
+    this.addOverlay(layer);
+    this.map.addLayer(layer.layer);
+  }
+ 
+  private addPane(paneId: string, zIndex: number) {
+    if(!this.map.getPane(paneId)) {
+      this.map.createPane(paneId);
+    }
+    this.map.getPane(paneId).style.zIndex = zIndex.toString();
+  }
+
+  private addOverlay(layer: WaterinfoLayer) {
+    this.layerControl.addOverlay(layer.layer, layer.name);
+  }
+
 }

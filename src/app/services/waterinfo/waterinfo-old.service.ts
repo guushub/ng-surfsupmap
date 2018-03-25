@@ -5,11 +5,11 @@ import 'rxjs/add/operator/toPromise';
 
 import { latLng } from 'leaflet';
 
-import { IWaterInfoRecord, IRwsFeature } from '../../map-elements/map-content/water-info-old/water-info-record';
+import { WaterInfoRecord, IRwsFeature } from '../../map-elements/map-content/water-info-old/water-info-record';
 
-interface IWaterInfoRecords {
-  waves: IWaterInfoRecord[];
-  wind: IWaterInfoRecord[];
+interface WaterInfoRecords {
+  waves: WaterInfoRecord[];
+  wind: WaterInfoRecord[];
 }
 
 @Injectable()
@@ -19,12 +19,12 @@ export class WaterinfoOldService {
   private waterInfoJsonUrl = '/assets/water-info-data.json';
 
   constructor(private http: Http) { }
-  getWaterInfoRecords(): Promise<IWaterInfoRecords> {
+  getWaterInfoRecords(): Promise<WaterInfoRecords> {
     return this.http.get(this.waterInfoJsonUrl)
       .toPromise()
       .then(response => {
         const rwsFeatures = response.json().features as IRwsFeature[];
-        const results: IWaterInfoRecords = {waves: [], wind: []};
+        const results: WaterInfoRecords = {waves: [], wind: []};
         results.waves = this.transformRwsFeatures("H1d3", "Th0_B0", rwsFeatures);
         results.wind = this.transformRwsFeatures("WC10", "WR10", rwsFeatures);
 
@@ -39,7 +39,7 @@ export class WaterinfoOldService {
   }
 
   private transformRwsFeatures(parHeight: string, parDirection: string, rwsFeatures: IRwsFeature[], nanValue: number = 99999) {
-    let waterInfoRecords: IWaterInfoRecord[] = [];
+    let waterInfoRecords: WaterInfoRecord[] = [];
     const locationNames = rwsFeatures.map((feature) => { return feature.loc });
 
     // remove duplicates
