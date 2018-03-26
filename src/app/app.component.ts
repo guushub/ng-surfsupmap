@@ -7,6 +7,8 @@ import { MapPanelLeftComponent } from './components/map-panel/map-panel-left/map
 // services
 import { MapMainService } from './services/map/map-main.service';
 import { WaterinfoOldService } from './services/waterinfo/waterinfo-old.service';
+import { WaterinfoService } from './services/waterinfo/waterinfo.service';
+import { LayerWaterinfoService } from './services/layer/layer-waterinfo.service';
 
 // Stuff
 //import * as WaterInfoMarker from './map-elements/marker/water-info-marker/water-info-marker';
@@ -14,7 +16,6 @@ import * as WaterInfoMarker from './map-elements/map-content/water-info-old/wate
 import * as WaterInfoIcon from './map-elements/map-content/water-info-old/water-info-icon';
 import * as Symbology from './map-elements/symbology/symbology';
 import { MapPane } from './map-elements/map-pane/map-pane';
-import { WaterinfoService } from './services/waterinfo/waterinfo.service';
 
 @Component({
   selector: 'app-root',
@@ -26,7 +27,8 @@ export class AppComponent {
   
   constructor (private mapMainService: MapMainService, 
     private waterInfoOldService: WaterinfoOldService,
-    private waterInfoService: WaterinfoService) {
+    private waterInfoService: WaterinfoService,
+private waterInfoLayerService: LayerWaterinfoService) {
 
   }
 
@@ -51,54 +53,38 @@ export class AppComponent {
         Symbology.ThemeColor.orange
     )   
 
-    const waveIconLegend = WaterInfoIcon.get({
-        id: `wave-marker-legend`,
-        value: 92,
-        label: "92",
-        direction: 270,
-        className: "waveMarkers-marker",
-        symbologyOptions: wavesSymbology
-    });
-    const layerDescriptionWave = `${waveIconLegend.options.html} Golfhoogte (cm)`;
-
-    const windIconLegend = WaterInfoIcon.get({
-        id: `wind-marker-legend`,
-        value: 5.5,
-        label: "5.5",
-        direction: 270,
-        className: "windMarkers-marker",
-        symbologyOptions: windSymbology
-    });
-    const layerDescriptionWind = `${windIconLegend.options.html} Wind snelheid (m/s)`;
-
+    
     this.waterInfoOldService.getWaterInfoRecords()
-    .then(waterInfoRecords => {
-        let waveMarkers: L.Marker[] = [];
-        let windMarkers: L.Marker[] = [];
-        
-        waterInfoRecords.waves.forEach((record, i) => { 
-            if(!isNaN(record.value) && !isNaN(record.direction)) {
-                const waveMarker = WaterInfoMarker.get(`wave-marker-${i}`, record, "waveMarkers", wavesSymbology, "waves");
-                waveMarkers.push(waveMarker);
-                //waveMarker.addTo(this.mapMainService.map);
-                // testMarker.bindPopup("Hallo");
-            }
+        .then(waterInfoRecords => {
+            let waveMarkers: L.Marker[] = [];
+            let windMarkers: L.Marker[] = [];
+            
+            waterInfoRecords.waves.forEach((record, i) => { 
+                if(!isNaN(record.value) && !isNaN(record.direction)) {
+                    const waveMarker = WaterInfoMarker.get(`wave-marker-${i}`, record, "waveMarkers", wavesSymbology, "waves");
+                    waveMarkers.push(waveMarker);
+                    //waveMarker.addTo(this.mapMainService.map);
+                    // testMarker.bindPopup("Hallo");
+                }
+            });
+
+            waterInfoRecords.wind.forEach((record, i) => { 
+                if(!isNaN(record.value) && !isNaN(record.direction)) {
+                    record.value = parseFloat(record.value.toFixed(1));
+                    const windMarker = WaterInfoMarker.get(`wind-marker-${i}`, record, "windMarkers", windSymbology, "wind");
+                    windMarkers.push(windMarker);
+                    //windMarker.addTo(this.mapMainService.map);
+                    //testMarker.bindPopup("Hallo");
+                }
+            });
+
+            //this.mapMainService.addLayer("waves", "Golfhoogte (cm)", 610, waveMarkers, wavesSymbology);
+            //this.mapMainService.addLayer("wind", "Wind snelheid (m/s)", 605, windMarkers, windSymbology);
+            
+            this.waterInfoLayerService.addLayer(windMarkers, windSymbology, "Wind snelheid (m/s)");
+            this.waterInfoLayerService.addLayer(waveMarkers, wavesSymbology, "Golfhoogte (cm)");
+
         });
-
-        waterInfoRecords.wind.forEach((record, i) => { 
-            if(!isNaN(record.value) && !isNaN(record.direction)) {
-                record.value = parseFloat(record.value.toFixed(1));
-                const windMarker = WaterInfoMarker.get(`wind-marker-${i}`, record, "windMarkers", windSymbology, "wind");
-                windMarkers.push(windMarker);
-                //windMarker.addTo(this.mapMainService.map);
-                //testMarker.bindPopup("Hallo");
-            }
-        });
-
-        this.mapMainService.addLayer("waves", layerDescriptionWave, 610, waveMarkers, wavesSymbology);
-        this.mapMainService.addLayer("wind", layerDescriptionWind, 605, windMarkers, windSymbology);
-
-    });
 
   }
 

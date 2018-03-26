@@ -6,7 +6,8 @@ interface SymbologyClassifiedOptions {
 }
 
 interface SymbologyCalculatedOptions {
-    getIconSize: {(val: number) : number}
+    getIconSize: {(val: number) : number};
+    legendIconValue: number;
 }
 
 export interface WaterInfoSymbology extends SymbologyClassifiedOptions {
@@ -32,7 +33,8 @@ export const getSymbologyByTheme = (themeType: ThemeType, themeColor: ThemeColor
         borderColor: colors.borderColor,
         fillColor: colors.fillColor,
         labelFontSize: font.labelFontSize,
-        labelFontFamily: font.labelFontFamily
+        labelFontFamily: font.labelFontFamily,
+        legendIconValue: getThemeLegendIconValue(themeType)
     }
 
     return symbology;
@@ -47,6 +49,17 @@ const getThemeIconSize = (themeType: ThemeType) => {
             return getIconSizeMs;
         default:
             return getIconSizeMs;
+    }
+}
+
+const getThemeLegendIconValue = (themeType: ThemeType) => {
+    switch (themeType) {
+        case ThemeType.cm:
+            return 92;
+        case ThemeType["m/s"]:
+            return 5.5;
+        default:
+            return 5;
     }
 }
 

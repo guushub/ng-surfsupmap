@@ -12,6 +12,7 @@ export const get = (waterInfoIconOptions: IWaterInfoIconOptions) => {
         html: _getHtml(waterInfoIconOptions)
     }
     const divIcon = L.divIcon(options) as WaterInfoIcon;
+
     divIcon.id = waterInfoIconOptions.id;
     return divIcon;
 }
@@ -34,7 +35,8 @@ const _getHtml = (waterInfoIconOptions: IWaterInfoIconOptions) => {
     const iconSize = waterInfoIconOptions.symbologyOptions.getIconSize(waterInfoIconOptions.value);
     const circleRadius = _getCircleRadius(iconSize);
     const direction = waterInfoIconOptions.direction;
-    const idMarkerArrow = `arrow-${waterInfoIconOptions.id}`;
+    //const idMarkerArrow = `arrow-${waterInfoIconOptions.id}`;
+    const idMarkerArrow = `${waterInfoIconOptions.symbologyOptions.fillColor}${waterInfoIconOptions.symbologyOptions.borderColor}`.replace("#","");
     const html = `<svg width=${iconSize} height=${iconSize}>
                     <defs>
                         ${_getDef(iconSize, idMarkerArrow, waterInfoIconOptions.symbologyOptions)}

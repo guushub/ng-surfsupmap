@@ -1,19 +1,19 @@
 import { Injectable } from '@angular/core';
 import * as L from 'leaflet';
 import { WaterInfoSymbologyCalculated } from '../../map-elements/symbology/symbology';
+import * as WaterInfoIcon from '../../map-elements/map-content/water-info-old/water-info-icon';
 
-interface WaterinfoLayer {
-    name: string;
-    layer: L.LayerGroup;
-    symbology: WaterInfoSymbologyCalculated;
-}
 
 @Injectable()
 export class MapMainService {
     public map: L.Map;
     public baseMaps: L.Control.LayersObject;
-    private layers: { [layerId: string]: WaterinfoLayer } = {};
+    private layerGroups: { [layerGoupId: number]: L.LayerGroup } = {};
+
     private layerControl: L.Control.Layers;
+    private zIndexBase = 600;
+
+    private layers = {};
 
     constructor() {
         this.baseMaps = {
@@ -35,6 +35,7 @@ export class MapMainService {
         // Note that we can't set the map itself yet when constructing/initializing this service.  
         // The dom is not ready yet, so call this from a component's 'ngOnInit()'. Something like:
         // this.mapMainService.setMap("map-main");   
+
         const map = L.map(divId, {
             zoomControl: false,
             center: L.latLng(54, 5),
@@ -57,25 +58,60 @@ export class MapMainService {
         this.map.addControl(this.layerControl);
     }
 
-    addLayer(layerId: string, name: string, zIndex: number, markers: L.Marker[], symbology: WaterInfoSymbologyCalculated) {
-        //TODO more symbology type
-        const layer = { layer: L.layerGroup(markers), name: name, symbology: symbology };
-        this.layers[layerId] = layer;
+    addLayerGroup(markers: L.Marker[]) {
+        // Need layer id to be able to identify these markers as part of a group. 
+        // TODO: Can this have a race condition?
+        const layerId = this.getNewLayerGroupId();
+        
+        // Need a pane to identify markers as part of a group
+        const paneId = this.addPane(layerId);
+        
+        // Give markers the paneId
+        markers.forEach((marker) => {
+            marker.options.pane = paneId;
+        });
 
-        this.addPane(layerId, zIndex);
-        this.addOverlay(layer);
-        this.map.addLayer(layer.layer);
+        // Create and add layer.
+        const layer = L.layerGroup(markers);
+        this.layerGroups[layerId] = layer;
+        this.map.addLayer(layer);
+        return layerId;
     }
 
-    private addPane(paneId: string, zIndex: number) {
+    private addPane(layerId: number) {
+        const paneId = `pane-${layerId}`;
+        const zIndex = this.zIndexBase + layerId;
+
         if (!this.map.getPane(paneId)) {
             this.map.createPane(paneId);
         }
         this.map.getPane(paneId).style.zIndex = zIndex.toString();
+
+        return paneId;
     }
 
-    private addOverlay(layer: WaterinfoLayer) {
-        this.layerControl.addOverlay(layer.layer, layer.name);
+    
+    addOverlay(layerId: number, layerDescription: string) {
+        const layer = this.getLayerById(layerId);
+        this.layerControl.addOverlay(layer, layerDescription);
     }
 
+
+    private getLayerById(layerId: number) {
+        if(layerId in this.layerGroups) {
+            return this.layerGroups[layerId];
+        }
+        return;
+    }
+
+    private getNewLayerGroupId() {
+        let maxId = 0;
+        for(let key in this.layerGroups) {
+            const n = Number(key);
+            maxId = n > maxId ? n : maxId;
+        }
+
+        return maxId ? maxId + 1 : maxId;
+    }
+    
 }
