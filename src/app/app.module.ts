@@ -13,20 +13,20 @@ import { AppComponent } from './app.component';
 import { MapPanelLeftComponent } from './components/map-panel/map-panel-left/map-panel-left.component';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    MapPanelLeftComponent
-  ],
-  imports: [
-    BrowserModule,
-    HttpModule,
-    HttpClientModule
-  ],
-  providers: [
-    MapMainService,
-    WaterinfoOldService,
-    WaterinfoService
-  ],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        MapPanelLeftComponent
+    ],
+    imports: [
+        BrowserModule,
+        HttpModule,
+        HttpClientModule
+    ],
+    providers: [
+        MapMainService,
+        WaterinfoOldService,
+        WaterinfoService
+    ],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }
