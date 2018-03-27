@@ -12,10 +12,13 @@ export class WaterinfoService {
     }
 
     getLatest(parameterIds: string): Observable<GeoJSON.FeatureCollection<GeoJSON.Point>> {
-        const url = "http://prodigyrood/dataproxy/Home/WaterinfoLatest";
+        //const url = "http://prodigyrood/dataproxy/Home/WaterinfoLatest";
+        const url = `http://localhost:5050/?`;
+        const params = encodeURIComponent(`http://waterinfo.rws.nl/api/point/latestmeasurements?parameterIds=${parameterIds}`)
         return this.http.get
             (url, {
-                params: new HttpParams().set("parameterIds", parameterIds)
+                //params: new HttpParams().set("parameterIds", parameterIds)
+                params: new HttpParams().set("url", params)
             })
             .catch(this.handleError);
     }
