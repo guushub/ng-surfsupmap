@@ -11,7 +11,6 @@ import { WaterinfoService } from './services/waterinfo/waterinfo.service';
 import { LayerWaterinfoService } from './services/layer/layer-waterinfo.service';
 
 // Stuff
-//import * as WaterInfoMarker from './map-elements/marker/water-info-marker/water-info-marker';
 import * as WaterInfoMarker from './map-elements/map-content/water-info-old/water-info-marker';
 import * as WaterInfoIcon from './map-elements/map-content/water-info-old/water-info-icon';
 import * as Symbology from './map-elements/symbology/symbology';
