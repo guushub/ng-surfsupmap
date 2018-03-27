@@ -2,7 +2,6 @@ import * as L from 'leaflet';
 
 import * as WaterInfoIcon from './water-info-icon';
 import { WaterInfoRecord } from './water-info-record'
-import { MapPane } from '../../map-pane/map-pane';
 import { WaterInfoSymbologyCalculated } from '../../symbology/symbology';
 
 export const get = (id: string, data: WaterInfoRecord, dataGroup: string,

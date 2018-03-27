@@ -14,7 +14,6 @@ import { LayerWaterinfoService } from './services/layer/layer-waterinfo.service'
 import * as WaterInfoMarker from './map-elements/map-content/water-info-old/water-info-marker';
 import * as WaterInfoIcon from './map-elements/map-content/water-info-old/water-info-icon';
 import * as Symbology from './map-elements/symbology/symbology';
-import { MapPane } from './map-elements/map-pane/map-pane';
 
 @Component({
   selector: 'app-root',
@@ -39,6 +38,12 @@ private waterInfoLayerService: LayerWaterinfoService) {
     }, (err) => {
         console.log(err);
     });
+
+    this.waterInfoService.getWaterinfoStationsLatest(
+        "Significante___20golfhoogte___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20500___20mHz___20in___20cm",
+        "Gemiddelde___20golfrichting___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20500___20mHz___20in___20graad"
+    )
+    
 
     this.mapMainService.setMap("map-main");
 
