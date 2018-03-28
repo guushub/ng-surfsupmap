@@ -4,16 +4,21 @@ import * as L from 'leaflet';
 // components
 import { MapPanelLeftComponent } from './components/map-panel/map-panel-left/map-panel-left.component';
 
-// services
-import { MapMainService } from './services/map/map-main.service';
+// services for data
 import { WaterinfoOldService } from './services/waterinfo/waterinfo-old.service';
 import { WaterinfoService } from './services/waterinfo/waterinfo.service';
-import { LayerWaterinfoService } from './services/layer/layer-waterinfo.service';
+
+// services for map control
+import { MapMainService } from './services/map/map-main.service';
+import { SurfsupLayerMapService } from './services/layer/surfsup-map-layer.service';
 
 // Stuff
-import * as WaterInfoMarker from './map-elements/map-content/water-info-old/water-info-marker';
-import * as WaterInfoIcon from './map-elements/map-content/water-info-old/water-info-icon';
-import * as Symbology from './map-elements/symbology/symbology';
+// import * as WaterInfoMarker from './map-elements/map-content/water-info-old/water-info-marker';
+// import * as WaterInfoIcon from './map-elements/map-content/water-info-old/water-info-icon';
+//import * as Symbology from './map-elements/symbology/symbology';
+import * as SurfsupMapTheme from "./surfsup-map/surfsup-map-theme";
+
+
 
 @Component({
   selector: 'app-root',
@@ -26,7 +31,7 @@ export class AppComponent {
   constructor (private mapMainService: MapMainService, 
     private waterInfoOldService: WaterinfoOldService,
     private waterInfoService: WaterinfoService,
-private waterInfoLayerService: LayerWaterinfoService) {
+private surfsupMapLayerService: SurfsupLayerMapService) {
 
   }
 
@@ -85,8 +90,8 @@ private waterInfoLayerService: LayerWaterinfoService) {
             //this.mapMainService.addLayer("waves", "Golfhoogte (cm)", 610, waveMarkers, wavesSymbology);
             //this.mapMainService.addLayer("wind", "Wind snelheid (m/s)", 605, windMarkers, windSymbology);
             
-            this.waterInfoLayerService.addLayer(windMarkers, windSymbology, "Wind snelheid (m/s)");
-            this.waterInfoLayerService.addLayer(waveMarkers, wavesSymbology, "Golfhoogte (cm)");
+            this.surfsupMapLayerService.addLayer(windMarkers, windSymbology, "Wind snelheid (m/s)");
+            this.surfsupMapLayerService.addLayer(waveMarkers, wavesSymbology, "Golfhoogte (cm)");
 
         });
 

@@ -1,15 +1,15 @@
 import { TestBed, inject } from '@angular/core/testing';
 
-import { LayerWaterinfoService } from './layer-waterinfo.service';
+import { SurfsupLayerMapService } from './surfsup-map-layer.service';
 
 describe('LayerWaterinfoService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [LayerWaterinfoService]
+      providers: [SurfsupLayerMapService]
     });
   });
 
-  it('should be created', inject([LayerWaterinfoService], (service: LayerWaterinfoService) => {
+  it('should be created', inject([SurfsupLayerMapService], (service: SurfsupLayerMapService) => {
     expect(service).toBeTruthy();
   }));
 });

@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 import * as L from 'leaflet';
-import { WaterInfoSymbologyCalculated } from '../../map-elements/symbology/symbology';
-import * as WaterInfoIcon from '../../map-elements/map-content/water-info-old/water-info-icon';
 
 
 @Injectable()
