@@ -4,7 +4,8 @@ import { Observable } from "rxjs/Observable";
 import 'rxjs/Rx';
 
 import * as L from 'leaflet';
-import * as proj4 from "proj4";
+//import * as proj4 from "proj4";
+import * as proj4x from 'proj4';
 
 import { WaterinfoStation } from '../../map-elements/map-content/waterinfo/waterinfo';
 import { WaterinfoMeasurementGroup } from '../../map-elements/map-content/waterinfo/waterinfo-measurement-group';
@@ -14,6 +15,7 @@ import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
 import { SurfsupMapPoint, SurfsupMapData } from '../../surfsup-map/surfsup-map-point';
 import { SurfsupMapRecord } from '../../surfsup-map/surfsup-map-record';
 import { SurfsupMapParameter } from '../../surfsup-map/surfsup-map-parameter';
+import { Proj } from 'proj4';
 
 interface WaterinfoLatestMeasurement {
     latestValue: number;
@@ -63,19 +65,19 @@ export class WaterinfoService {
 
     /* API interaction */
     getLatest(parameterIds: string): Observable<GeoJSON.FeatureCollection<WaterinfoPoint>> {
-        const url = "http://prodigyrood/dataproxy/Home/WaterinfoLatest";
-        // const url = `http://localhost:5050/?`;
-        // const params = encodeURIComponent(`http://waterinfo.rws.nl/api/point/latestmeasurements?parameterIds=${parameterIds}`)
+        // const url = "http://prodigyrood/dataproxy/Home/WaterinfoLatest";
+        const url = `http://localhost:5050/?`;
+        const params = encodeURIComponent(`http://waterinfo.rws.nl/api/point/latestmeasurements?parameterIds=${parameterIds}`)
         return this.http.get<GeoJSON.FeatureCollection<WaterinfoPoint>>
             (url, {
-                params: new HttpParams().set("parameterIds", parameterIds)
-                // params: new HttpParams().set("url", params)
+                // params: new HttpParams().set("parameterIds", parameterIds)
+                params: new HttpParams().set("url", params)
             })
             .catch(this.handleError);
     }
 
     getGroups(): Observable<WaterinfoGroup[]> {
-        if(this.groupsCache.length === 0) {
+        if(this.groupsCache.length > 0) {
             return new Observable<WaterinfoGroup[]>(observer => {
                 observer.next(this.groupsCache);
                 observer.complete();
@@ -239,13 +241,16 @@ export class WaterinfoService {
 
     //TODO make projection service.
     private getLatLng(coordinates: number[]) {
-        //const coords = proj4("EPSG:3857", "EPSG:4326", [coordinates[1], coordinates[0]]);
+        // workaround for proj4 in webpack and typescript; it would give proj4 is not a function error otherwise.
+        const proj4 = (proj4x as any).default;
+
         const coords = proj4("+proj=utm +zone=31 +ellps=GRS80 +units=m +no_defs", "EPSG:4326", [coordinates[0], coordinates[1]]);
         const latLng = L.latLng(coords[1], coords[0]);
         return latLng;
     }
 
     private handleError(error: Response): ErrorObservable {
+        console.log(error);
         return Observable.throw(error.statusText);
     }
 

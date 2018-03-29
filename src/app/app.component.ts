@@ -31,69 +31,76 @@ export class AppComponent {
   constructor (private mapMainService: MapMainService, 
     private waterInfoOldService: WaterinfoOldService,
     private waterInfoService: WaterinfoService,
-private surfsupMapLayerService: SurfsupLayerMapService) {
+    private surfsupMapLayerService: SurfsupLayerMapService) {
 
   }
 
   ngOnInit() {
     // Div should be ready, so now we can finally construct the map.
+
     this.waterInfoService.getLatest("Significante___20golfhoogte___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20500___20mHz___20in___20cm")
     .subscribe((data) => {
         console.log(data);
-    }, (err) => {
-        console.log(err);
     });
 
-    this.waterInfoService.getWaterinfoStationsLatest(
-        "Significante___20golfhoogte___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20500___20mHz___20in___20cm",
-        "Gemiddelde___20golfrichting___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20500___20mHz___20in___20graad"
-    )
+    // this.waterInfoService.getWaterinfoStationsLatest(
+    //     "Significante___20golfhoogte___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20500___20mHz___20in___20cm",
+    //     "Gemiddelde___20golfrichting___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20500___20mHz___20in___20graad"
+    // )
     
+    this.waterInfoService.getLatestAsSurfsupMapData(
+        "Significante___20golfhoogte___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20500___20mHz___20in___20cm",
+        "Gemiddelde___20golfrichting___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20500___20mHz___20in___20graad",
+        "Significante___20golfhoogte___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20500___20mHz___20in___20cm"
+    )
+    .subscribe((data) => {
+        console.log(data);
+    });
 
     this.mapMainService.setMap("map-main");
 
-    const wavesSymbology = Symbology.getSymbologyByTheme(
-        Symbology.ThemeType.cm, 
-        Symbology.ThemeColor.purple
-    )   
+    // const wavesSymbology = Symbology.getSymbologyByTheme(
+    //     Symbology.ThemeType.cm, 
+    //     Symbology.ThemeColor.purple
+    // )   
 
-    const windSymbology = Symbology.getSymbologyByTheme(
-        Symbology.ThemeType["m/s"], 
-        Symbology.ThemeColor.orange
-    )   
+    // const windSymbology = Symbology.getSymbologyByTheme(
+    //     Symbology.ThemeType["m/s"], 
+    //     Symbology.ThemeColor.orange
+    // )   
 
     
-    this.waterInfoOldService.getWaterInfoRecords()
-        .then(waterInfoRecords => {
-            let waveMarkers: L.Marker[] = [];
-            let windMarkers: L.Marker[] = [];
+    // this.waterInfoOldService.getWaterInfoRecords()
+    //     .then(waterInfoRecords => {
+    //         let waveMarkers: L.Marker[] = [];
+    //         let windMarkers: L.Marker[] = [];
             
-            waterInfoRecords.waves.forEach((record, i) => { 
-                if(!isNaN(record.value) && !isNaN(record.direction)) {
-                    const waveMarker = WaterInfoMarker.get(`wave-marker-${i}`, record, "waveMarkers", wavesSymbology, "waves");
-                    waveMarkers.push(waveMarker);
-                    //waveMarker.addTo(this.mapMainService.map);
-                    // testMarker.bindPopup("Hallo");
-                }
-            });
+    //         waterInfoRecords.waves.forEach((record, i) => { 
+    //             if(!isNaN(record.value) && !isNaN(record.direction)) {
+    //                 const waveMarker = WaterInfoMarker.get(`wave-marker-${i}`, record, "waveMarkers", wavesSymbology, "waves");
+    //                 waveMarkers.push(waveMarker);
+    //                 //waveMarker.addTo(this.mapMainService.map);
+    //                 // testMarker.bindPopup("Hallo");
+    //             }
+    //         });
 
-            waterInfoRecords.wind.forEach((record, i) => { 
-                if(!isNaN(record.value) && !isNaN(record.direction)) {
-                    record.value = parseFloat(record.value.toFixed(1));
-                    const windMarker = WaterInfoMarker.get(`wind-marker-${i}`, record, "windMarkers", windSymbology, "wind");
-                    windMarkers.push(windMarker);
-                    //windMarker.addTo(this.mapMainService.map);
-                    //testMarker.bindPopup("Hallo");
-                }
-            });
+    //         waterInfoRecords.wind.forEach((record, i) => { 
+    //             if(!isNaN(record.value) && !isNaN(record.direction)) {
+    //                 record.value = parseFloat(record.value.toFixed(1));
+    //                 const windMarker = WaterInfoMarker.get(`wind-marker-${i}`, record, "windMarkers", windSymbology, "wind");
+    //                 windMarkers.push(windMarker);
+    //                 //windMarker.addTo(this.mapMainService.map);
+    //                 //testMarker.bindPopup("Hallo");
+    //             }
+    //         });
 
-            //this.mapMainService.addLayer("waves", "Golfhoogte (cm)", 610, waveMarkers, wavesSymbology);
-            //this.mapMainService.addLayer("wind", "Wind snelheid (m/s)", 605, windMarkers, windSymbology);
+    //         //this.mapMainService.addLayer("waves", "Golfhoogte (cm)", 610, waveMarkers, wavesSymbology);
+    //         //this.mapMainService.addLayer("wind", "Wind snelheid (m/s)", 605, windMarkers, windSymbology);
             
-            this.surfsupMapLayerService.addLayer(windMarkers, windSymbology, "Wind snelheid (m/s)");
-            this.surfsupMapLayerService.addLayer(waveMarkers, wavesSymbology, "Golfhoogte (cm)");
+    //         this.surfsupMapLayerService.addLayer(windMarkers, windSymbology, "Wind snelheid (m/s)");
+    //         this.surfsupMapLayerService.addLayer(waveMarkers, wavesSymbology, "Golfhoogte (cm)");
 
-        });
+    //     });
 
   }
 
