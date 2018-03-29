@@ -76,6 +76,10 @@ export class MapMainService {
         return layerId;
     }
 
+    addMarkersToLayer(markers: L.Marker[], paneId: string) {
+        
+    }
+
     private addPane(layerId: number) {
         const paneId = `pane-${layerId}`;
         const zIndex = this.zIndexBase + layerId;

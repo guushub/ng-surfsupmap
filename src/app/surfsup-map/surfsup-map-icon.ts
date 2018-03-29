@@ -6,7 +6,8 @@ import { SurfsupMapPoint, SurfsupMapData } from './surfsup-map-point';
 export const get = (options: SurfsupMapIconOptions) => {
     const quantityValue = options.data.quantity;
     const iconSize = options.symbologyOptions.getIconSize(quantityValue.value);
-    const divIconOptions = {
+    const divIconOptions: L.DivIconOptions = {
+        className: "surfsupmap-icon",
         iconSize: L.point(iconSize, iconSize),
         html: getHtml(options)
     }
@@ -40,7 +41,7 @@ const getHtml = (options: SurfsupMapIconOptions) => {
 
     let label = "";
     if(labelValue) {
-        const unit = options.data.label.parameter.unit;
+        const unit = options.data.label.parameter ? options.data.label.parameter.unit : "";
         if(unit === "m/s" || unit === "s") {
             label = labelValue.toFixed(1);
         } else {

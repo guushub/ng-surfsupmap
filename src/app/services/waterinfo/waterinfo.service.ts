@@ -83,7 +83,7 @@ export class WaterinfoService {
                 observer.complete();
             })
         } else {
-            const groupUrl = "https://waterinfo.rws.nl/api/nav/downloadgroups";
+            const groupUrl = "https://waterinfo.rws.nl/api/nav/allgroups";
             const url = `http://localhost:5050`;
             const params = encodeURIComponent(groupUrl);
             return this.http.get
@@ -144,11 +144,10 @@ export class WaterinfoService {
                 location: location
             }
 
-            // TODO check for certain values to ignore
-            // if (!measurements || measurements.length <= 0) {
-            //     return;
-            // }
-
+            // TODO check for certain values to ignore (create validation object)
+            if (properties.measurements[0].latestValue > 9999) {
+                return;
+            }
             stationDict[properties.locationCode] = point;
 
         });
@@ -161,10 +160,10 @@ export class WaterinfoService {
                     return;
                 }
 
-                // TODO check for certain values to ignore
-                // if (!measurements || measurements.length <= 0) {
-                //     return;
-                // }
+                // TODO check for certain values to ignore (create validation object)
+                if (properties.measurements[0].latestValue > 360) {
+                    return;
+                }
                 const direction = this.waterinfoPropertiesToSurfsupMapRecord(properties, directionLatest.parameter);
                 stationDict[properties.locationCode].data.direction = direction;
             });
@@ -176,11 +175,10 @@ export class WaterinfoService {
                 if (!(properties.locationCode in stationDict)) {
                     return;
                 }
-                // TODO check for certain values to ignore
-                // if (!measurements || measurements.length <= 0) {
-                //     return;
-                // }
-
+                // TODO check for certain values to ignore (create validation object)
+                if (properties.measurements[0].latestValue > 9999) {
+                    return;
+                }
                 const label = this.waterinfoPropertiesToSurfsupMapRecord(properties, labelLatest.parameter);
                 stationDict[properties.locationCode].data.label = label;
             });

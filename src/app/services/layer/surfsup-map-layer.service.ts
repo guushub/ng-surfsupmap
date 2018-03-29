@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { MapMainService } from '../map/map-main.service';
 import { SurfsupMapSymbology } from '../../surfsup-map/surfsup-map-symbology';
 import * as SurfsupMapIcon from "../../surfsup-map/surfsup-map-icon";
-import { SurfsupMapData } from '../../surfsup-map/surfsup-map-point';
+import { SurfsupMapPoint, SurfsupMapData } from '../../surfsup-map/surfsup-map-point';
+import * as SurfsupMapMarker from "../../surfsup-map/surfsup-map-marker";
+
 
 interface WaterinfoLayer {
 	name: string;
@@ -18,8 +20,20 @@ export class SurfsupLayerMapService {
 
 	constructor(private mapService: MapMainService) { }
 
-	addLayer(markers: L.Marker[], symbology: SurfsupMapSymbology, legendText?: string) {
+	addLayer(points: SurfsupMapPoint[], symbology: SurfsupMapSymbology, legendText?: string) {
+//		addLayer(markers: L.Marker[], symbology: SurfsupMapSymbology, legendText?: string) {
 		//const layerDescription = this.getLayerDescription()
+		
+		const markers: L.Marker[] = [];
+		points.forEach(point => {
+			const markerOptions: SurfsupMapMarker.SurfsupMapMarkerOptions = {
+				point: point,
+				symbology: symbology
+			}
+			const marker = SurfsupMapMarker.get(markerOptions);
+			markers.push(marker);
+		});
+
 		const layerId = this.mapService.addLayerGroup(markers);
 		if(legendText) {
 			this.addLayerOverlay(this.mapService, layerId, legendText, symbology);

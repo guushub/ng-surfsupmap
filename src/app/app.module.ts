@@ -6,7 +6,6 @@ import { NgModule } from '@angular/core';
 // services
 import { MapMainService } from './services/map/map-main.service';
 import { SurfsupLayerMapService } from './services/layer/surfsup-map-layer.service';
-import { WaterinfoOldService } from './services/waterinfo/waterinfo-old.service';
 import { WaterinfoService } from './services/waterinfo/waterinfo.service';
 
 // components
@@ -26,7 +25,6 @@ import { MapPanelLeftComponent } from './components/map-panel/map-panel-left/map
     providers: [
         MapMainService,
         SurfsupLayerMapService,
-        WaterinfoOldService,
         WaterinfoService
     ],
     bootstrap: [AppComponent]
