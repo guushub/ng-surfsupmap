@@ -39,7 +39,6 @@ export class AppComponent {
 			"Significante___20golfhoogte___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20500___20mHz___20in___20cm"
 		)
 		.subscribe((points) => {
-			console.log(points);
 			const symbology = SurfsupMapTheme.getSymbologyByTheme(
 				SurfsupMapTheme.ThemeType.cm,
 				SurfsupMapTheme.ThemeColor.purple
@@ -56,7 +55,6 @@ export class AppComponent {
 			"Windsnelheid___20Lucht___20t.o.v.___20Mean___20Sea___20Level___20in___20m___2Fs"
 		)
 		.subscribe((points) => {
-			console.log(points);
 			const symbology = SurfsupMapTheme.getSymbologyByTheme(
 				SurfsupMapTheme.ThemeType["m/s"],
 				SurfsupMapTheme.ThemeColor.orange
