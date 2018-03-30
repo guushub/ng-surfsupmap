@@ -65,14 +65,9 @@ export class WaterinfoService {
 
     /* API interaction */
     getLatest(parameterIds: string): Observable<GeoJSON.FeatureCollection<WaterinfoPoint>> {
-        // const url = "http://prodigyrood/dataproxy/Home/WaterinfoLatest";
-        const url = `http://localhost:5050/?`;
+        const url = `http://prodigyrood/proxy/proxy.ashx`;
         const params = encodeURIComponent(`http://waterinfo.rws.nl/api/point/latestmeasurements?parameterIds=${parameterIds}`)
-        return this.http.get<GeoJSON.FeatureCollection<WaterinfoPoint>>
-            (url, {
-                // params: new HttpParams().set("parameterIds", parameterIds)
-                params: new HttpParams().set("url", params)
-            })
+        return this.http.get<GeoJSON.FeatureCollection<WaterinfoPoint>>(`${url}?${params}`)
             .catch(this.handleError);
     }
 
@@ -83,18 +78,12 @@ export class WaterinfoService {
                 observer.complete();
             })
         } else {
-            const groupUrl = "https://waterinfo.rws.nl/api/nav/allgroups";
-            const url = `http://localhost:5050`;
-            const params = encodeURIComponent(groupUrl);
-            return this.http.get
-                (url, {
-                    //params: new HttpParams().set("parameterIds", parameterIds)
-                    params: new HttpParams().set("url", params)
-                })
+            const url = `http://prodigyrood/proxy/proxy.ashx`;
+            const params = encodeURIComponent("https://waterinfo.rws.nl/api/nav/allgroups");
+            return this.http.get(`${url}?${params}`)
                 .catch(this.handleError);
         }
     }
-
 
     getLatestAsSurfsupMapData(parQuantity: string, parDirection?: string, parLabel?: string): Observable<SurfsupMapPoint[]> {
         
@@ -113,7 +102,6 @@ export class WaterinfoService {
                 this.getWaterinfoLatest(parLabel)
             )
         }
-        
 
         return Observable.forkJoin(getLatestObservables)
             .map((results) => {
@@ -127,8 +115,6 @@ export class WaterinfoService {
             .catch(this.handleError);
 
     }
-
-    
 
     /* Transform */
     private waterinfoLatestToSurfMapData(quantityLatest: WaterinfoLatest, directionLatest: WaterinfoLatest, labelLatest: WaterinfoLatest): SurfsupMapPoint[] {
