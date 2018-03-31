@@ -11,6 +11,7 @@ export class MapPanelLeftComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+    
   }
 
 }

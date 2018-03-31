@@ -7,15 +7,18 @@ import { NgModule } from '@angular/core';
 import { MapMainService } from './services/map/map-main.service';
 import { SurfsupLayerMapService } from './services/layer/surfsup-map-layer.service';
 import { WaterinfoService } from './services/waterinfo/waterinfo.service';
+import { PopupService } from './services/popup/popup.service';
 
-// components
+// components & directives
 import { AppComponent } from './app.component';
 import { MapPanelLeftComponent } from './components/map-panel/map-panel-left/map-panel-left.component';
+import { SurfsupMapPopupComponent } from './components/popup/surfsup-map-popup/surfsup-map-popup.component';
 
 @NgModule({
     declarations: [
         AppComponent,
-        MapPanelLeftComponent
+        MapPanelLeftComponent,
+        SurfsupMapPopupComponent
     ],
     imports: [
         BrowserModule,
@@ -25,7 +28,11 @@ import { MapPanelLeftComponent } from './components/map-panel/map-panel-left/map
     providers: [
         MapMainService,
         SurfsupLayerMapService,
-        WaterinfoService
+        WaterinfoService,
+        PopupService
+    ],
+    entryComponents: [
+        SurfsupMapPopupComponent
     ],
     bootstrap: [AppComponent]
 })

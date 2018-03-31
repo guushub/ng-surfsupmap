@@ -4,6 +4,7 @@ import { SurfsupMapSymbology } from '../../surfsup-map/surfsup-map-symbology';
 import * as SurfsupMapIcon from "../../surfsup-map/surfsup-map-icon";
 import { SurfsupMapPoint, SurfsupMapData } from '../../surfsup-map/surfsup-map-point';
 import * as SurfsupMapMarker from "../../surfsup-map/surfsup-map-marker";
+import { PopupService } from '../popup/popup.service';
 
 
 interface WaterinfoLayer {
@@ -18,7 +19,7 @@ export class SurfsupLayerMapService {
 
 	private layers: { [layerId: string]: WaterinfoLayer } = {};
 
-	constructor(private mapService: MapMainService) { }
+	constructor(private mapService: MapMainService, private popupService: PopupService) { }
 
 	addLayer(points: SurfsupMapPoint[], symbology: SurfsupMapSymbology, legendText?: string) {
 //		addLayer(markers: L.Marker[], symbology: SurfsupMapSymbology, legendText?: string) {
@@ -31,7 +32,19 @@ export class SurfsupLayerMapService {
 				symbology: symbology
 			}
 			const marker = SurfsupMapMarker.get(markerOptions);
+			this.popupService.register(marker, "Hoi");
 			markers.push(marker);
+			// marker.bindPopup(`
+			// 	<div>
+			// 	<h3>Popup!</h3>
+			// 	<ng-template appPopup></ng-template>
+			// 	</div>
+			// `);
+
+			// marker.on('click', (e) => {
+
+			// 	console.log("click");
+			// });
 		});
 
 		const layerId = this.mapService.addLayerGroup(markers);
