@@ -32,7 +32,7 @@ interface WaterinfoPoint extends GeoJSON.Point {
     properties: WaterinfoProperties
 }
 
-interface WaterinfoParameter {
+export interface WaterinfoParameter {
     label: string;
     slug: string;
     synonyms: any[];
@@ -43,7 +43,7 @@ interface WaterinfoLatest {
     features: GeoJSON.Feature<WaterinfoPoint>[];
 }
 
-interface WaterinfoGroup {
+export interface WaterinfoGroup {
     label: string;
     defaultFavorite: boolean;
     slug: string;
@@ -54,7 +54,7 @@ interface WaterinfoGroup {
 @Injectable()
 export class WaterinfoService {
 
-    private groupsCache: WaterinfoGroup[] = [];
+    private groups: Observable<WaterinfoGroup[]>;
 
     constructor(private http: HttpClient) {
 
@@ -69,17 +69,16 @@ export class WaterinfoService {
     }
 
     getGroups(): Observable<WaterinfoGroup[]> {
-        if(this.groupsCache.length > 0) {
-            return new Observable<WaterinfoGroup[]>(observer => {
-                observer.next(this.groupsCache);
-                observer.complete();
-            })
-        } else {
+        if(!this.groups) {
             const url = `http://prodigyrood/proxy/proxy.ashx`;
             const params = encodeURIComponent("https://waterinfo.rws.nl/api/nav/allgroups");
-            return this.http.get(`${url}?${params}`)
-                .catch(this.handleError);
-        }
+            this.groups = this.http.get<Observable<WaterinfoGroup[]>>(`${url}?${params}`) 
+            .publishReplay(1)
+            .refCount()
+            .catch(this.handleError);;
+        } 
+        
+        return this.groups;
     }
 
     getLatestAsSurfsupMapData(group: string, parQuantity: string, parDirection?: string, parLabel?: string): Observable<SurfsupMapPoint[]> {
