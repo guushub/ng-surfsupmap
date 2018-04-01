@@ -30,7 +30,8 @@ export class AppComponent {
 
 	ngOnInit() {
 		this.mapMainService.setMap("map-main");
-
+		//this.mapMainService.injectComponentToControl();
+		
 		this.waterInfoService.getLatestAsSurfsupMapData(
 			"Golven",
 			"Significante___20golfhoogte___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20500___20mHz___20in___20cm",

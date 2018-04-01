@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, ComponentFactoryResolver, Injector, ApplicationRef } from '@angular/core';
 import * as L from 'leaflet';
+import { SurfsupMapLayerAddComponent } from '../../components/surfsup-map-layer-add/surfsup-map-layer-add.component';
 
 
 @Injectable()
@@ -13,7 +14,9 @@ export class MapMainService {
 
     private layers = {};
 
-    constructor() {
+    
+
+    constructor(private cfr: ComponentFactoryResolver, private injector: Injector, private appRef: ApplicationRef) {
         this.baseMaps = {
             OpenStreetMap: L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
@@ -27,7 +30,9 @@ export class MapMainService {
         }
 
 
+
     }
+
 
     setMap(divId: string) {
         // Note that we can't set the map itself yet when constructing/initializing this service.  
@@ -52,8 +57,8 @@ export class MapMainService {
             .addTo(map);
 
         this.map = map;
-        this.layerControl = L.control.layers();
-        this.map.addControl(this.layerControl);
+        this.addControls();
+
     }
 
     addLayerGroup(markers: L.Marker[]) {
@@ -114,6 +119,50 @@ export class MapMainService {
         }
 
         return maxId ? maxId + 1 : maxId;
+    }
+
+    private addControls() {
+        // Layer control
+        this.layerControl = L.control.layers();
+        this.map.addControl(this.layerControl);
+
+        this.injectComponentToControl();
+    }
+
+    private injectComponentToControl() {
+        
+        const componentControl = L.Control.extend({
+            options: {
+                position: 'topleft' 
+                //control position - allowed: 'topleft', 'topright', 'bottomleft', 'bottomright'
+              },
+             
+            onAdd: (map) => {
+                const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-component');
+                container.style.backgroundColor = 'white';
+                container.style.width = '100%';
+                container.style.height = '100%';
+
+                setTimeout(() => {this.loadComponent(container)});
+
+                return container;
+            }   
+        })
+        	
+        this.map.addControl(new componentControl());
+
+    }
+
+    private loadComponent(container) {
+        const compFactory = this.cfr.resolveComponentFactory(SurfsupMapLayerAddComponent);
+        const componentRef = compFactory.create(this.injector);
+        this.appRef.attachView(componentRef.hostView);
+        componentRef.onDestroy(() => {
+            this.appRef.detachView(componentRef.hostView);
+        });
+
+        const html = componentRef.location.nativeElement;
+        container.appendChild(html);
     }
     
 }

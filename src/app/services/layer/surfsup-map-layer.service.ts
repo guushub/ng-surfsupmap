@@ -30,18 +30,7 @@ export class SurfsupLayerMapService {
 		points.forEach(point => {
 			const marker = point.marker(symbology);
 			const setInstanceData = (componentRef: ComponentRef<SurfsupMapPopupComponent>) => {
-				componentRef.instance.value = point.properties.data.quantity.value;
-				componentRef.instance.unit = point.properties.data.quantity.parameter.unit;
-				componentRef.instance.name = point.properties.name;
-				componentRef.instance.datetime = point.properties.data.quantity.datetime;
-
-				const parameters: string[] = [];
-				parameters.push(point.properties.data.quantity.parameter.id);
-				if(point.properties.data.direction && parameters.indexOf(point.properties.data.direction.parameter.id) < 0) parameters.push(point.properties.data.direction.parameter.id);
-				if(point.properties.data.label && parameters.indexOf(point.properties.data.label.parameter.id) < 0) parameters.push(point.properties.data.label.parameter.id);
-				
-				const url  = `https://waterinfo.rws.nl/#!/details/expert/${point.properties.group}/${point.properties.locationCode}/${parameters.join(",")}`
-				componentRef.instance.waterinfoUrl = url;
+				componentRef.instance.init(point);
 			}
 			this.popupService.register(marker, SurfsupMapPopupComponent, setInstanceData);
 			markers.push(marker);

@@ -29,11 +29,8 @@ export class PopupService {
 				this.componentRef.onDestroy(() => {
 					this.appRef.detachView(this.componentRef.hostView);
 				});
-				
-				let div = document.createElement('div');
-				div.appendChild(this.componentRef.location.nativeElement);
-				marker.setPopupContent(div);
-
+				marker.bindPopup(this.componentRef.location.nativeElement)
+				//marker.setPopupContent(this.componentRef.location.nativeElement);
 			});
 	}
 

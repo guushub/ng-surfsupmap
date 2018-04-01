@@ -1,4 +1,4 @@
-<h3>{{name}}</h3>
+<h3>{{point.properties.name}} ({{point.properties.group | lowercase}})</h3>
 <a target="_blank" href="{{waterinfoUrl}}">Meer info</a><br>
-<b>{{value}} {{unit}}</b><br>
-{{datetime}}
+<b>{{point.properties.data.quantity.value}} {{point.properties.data.quantity.parameter.unit}}</b><br>
+{{point.properties.data.quantity.datetime | date: 'dd-MM-yyyy HH:m'}}
