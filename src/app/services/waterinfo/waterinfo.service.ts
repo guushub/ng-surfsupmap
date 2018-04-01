@@ -4,18 +4,15 @@ import { Observable } from "rxjs/Observable";
 import 'rxjs/Rx';
 
 import * as L from 'leaflet';
-//import * as proj4 from "proj4";
-import * as proj4x from 'proj4';
 
 import { WaterinfoStation } from '../../map-elements/map-content/waterinfo/waterinfo';
 import { WaterinfoMeasurementGroup } from '../../map-elements/map-content/waterinfo/waterinfo-measurement-group';
 import { WaterinfoMeasurement } from '../../map-elements/map-content/waterinfo/waterinfo-measurement';
 import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
 
-import { SurfsupMapPoint, SurfsupMapData } from '../../surfsup-map/surfsup-map-point';
+import { SurfsupMapPoint } from '../../surfsup-map/surfsup-map-point';
 import { SurfsupMapRecord } from '../../surfsup-map/surfsup-map-record';
 import { SurfsupMapParameter } from '../../surfsup-map/surfsup-map-parameter';
-import { Proj } from 'proj4';
 
 interface WaterinfoLatestMeasurement {
     latestValue: number;
@@ -85,7 +82,7 @@ export class WaterinfoService {
         }
     }
 
-    getLatestAsSurfsupMapData(parQuantity: string, parDirection?: string, parLabel?: string): Observable<SurfsupMapPoint[]> {
+    getLatestAsSurfsupMapData(group: string, parQuantity: string, parDirection?: string, parLabel?: string): Observable<SurfsupMapPoint[]> {
         
         const getLatestObservables = [
             this.getWaterinfoLatest(parQuantity)
@@ -109,7 +106,7 @@ export class WaterinfoService {
                 const direction = parDirection ? results[1] : null;
                 const label = parLabel ? results[results.length - 1] : null;
                 
-                return this.waterinfoLatestToSurfMapData(quantity, direction, label)
+                return this.waterinfoLatestToSurfMapData(group, quantity, direction, label)
                 
             })
             .catch(this.handleError);
@@ -117,18 +114,26 @@ export class WaterinfoService {
     }
 
     /* Transform */
-    private waterinfoLatestToSurfMapData(quantityLatest: WaterinfoLatest, directionLatest: WaterinfoLatest, labelLatest: WaterinfoLatest): SurfsupMapPoint[] {
+    private waterinfoLatestToSurfMapData(group: string, quantityLatest: WaterinfoLatest, directionLatest: WaterinfoLatest, labelLatest: WaterinfoLatest): SurfsupMapPoint[] {
         const points: SurfsupMapPoint[] = [];
         const stationDict: { [locationCode: string]: SurfsupMapPoint } = {};
 
         quantityLatest.features.forEach(feature => {
             const properties = feature.properties as WaterinfoProperties;
-            const location = this.getLatLng(feature.geometry.coordinates)
-            const point: SurfsupMapPoint = {
-                id: `${properties.locationCode}`,
-                data: { quantity: this.waterinfoPropertiesToSurfsupMapRecord(properties, quantityLatest.parameter) },
-                location: location
-            }
+            const quantityRecord = this.waterinfoPropertiesToSurfsupMapRecord(properties, quantityLatest.parameter);
+            //const location = this.getLatLng(feature.geometry.coordinates)
+            const point = new SurfsupMapPoint({
+                    data: { quantity: quantityRecord },
+                    group: group,
+                    locationCode: properties.locationCode.toString(),
+                    name: properties.name
+                }, 
+                {
+                    x: feature.geometry.coordinates[0],
+                    y: feature.geometry.coordinates[1]
+                },
+                feature.crs.properties["name"] 
+            );
 
             // TODO check for certain values to ignore (create validation object)
             if (properties.measurements[0].latestValue > 9999) {
@@ -150,8 +155,8 @@ export class WaterinfoService {
                 if (properties.measurements[0].latestValue > 360) {
                     return;
                 }
-                const direction = this.waterinfoPropertiesToSurfsupMapRecord(properties, directionLatest.parameter);
-                stationDict[properties.locationCode].data.direction = direction;
+                const directionRecord = this.waterinfoPropertiesToSurfsupMapRecord(properties, directionLatest.parameter);
+                stationDict[properties.locationCode].properties.data.direction = directionRecord;
             });
         }
 
@@ -165,8 +170,8 @@ export class WaterinfoService {
                 if (properties.measurements[0].latestValue > 9999) {
                     return;
                 }
-                const label = this.waterinfoPropertiesToSurfsupMapRecord(properties, labelLatest.parameter);
-                stationDict[properties.locationCode].data.label = label;
+                const labelRecord = this.waterinfoPropertiesToSurfsupMapRecord(properties, labelLatest.parameter);
+                stationDict[properties.locationCode].properties.data.label = labelRecord;
             });
         }
 
@@ -224,14 +229,14 @@ export class WaterinfoService {
     }
 
     //TODO make projection service.
-    private getLatLng(coordinates: number[]) {
-        // workaround for proj4 in webpack and typescript; it would give proj4 is not a function error otherwise.
-        const proj4 = (proj4x as any).default;
+    // private getLatLng(coordinates: number[]) {
+    //     // workaround for proj4 in webpack and typescript; it would give proj4 is not a function error otherwise.
+    //     const proj4 = (proj4x as any).default;
 
-        const coords = proj4("+proj=utm +zone=31 +ellps=GRS80 +units=m +no_defs", "EPSG:4326", [coordinates[0], coordinates[1]]);
-        const latLng = L.latLng(coords[1], coords[0]);
-        return latLng;
-    }
+    //     const coords = proj4("+proj=utm +zone=31 +ellps=GRS80 +units=m +no_defs", "EPSG:4326", [coordinates[0], coordinates[1]]);
+    //     const latLng = L.latLng(coords[1], coords[0]);
+    //     return latLng;
+    // }
 
     private handleError(error: Response): ErrorObservable {
         console.log(error);

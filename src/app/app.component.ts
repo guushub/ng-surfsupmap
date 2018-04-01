@@ -14,8 +14,6 @@ import { SurfsupLayerMapService } from './services/layer/surfsup-map-layer.servi
 // Stuff
 import * as SurfsupMapTheme from "./surfsup-map/surfsup-map-theme";
 
-
-
 @Component({
 	selector: 'app-root',
 	templateUrl: './app.component.html',
@@ -34,6 +32,7 @@ export class AppComponent {
 		this.mapMainService.setMap("map-main");
 
 		this.waterInfoService.getLatestAsSurfsupMapData(
+			"Golven",
 			"Significante___20golfhoogte___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20500___20mHz___20in___20cm",
 			"Gemiddelde___20golfrichting___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20500___20mHz___20in___20graad",
 			"Significante___20golfhoogte___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20500___20mHz___20in___20cm"
@@ -44,12 +43,13 @@ export class AppComponent {
 				SurfsupMapTheme.ThemeColor.purple
 			)
 
-			const legendText = points[0].data.quantity.parameter.name;
+			const legendText = points[0].properties.data.quantity.parameter.name;
 
 			this.surfsupMapLayerService.addLayer(points, symbology, legendText);
 		});
 
 		this.waterInfoService.getLatestAsSurfsupMapData(
+			"Wind",
 			"Windsnelheid___20Lucht___20t.o.v.___20Mean___20Sea___20Level___20in___20m___2Fs",
 			"Windrichting___20Lucht___20t.o.v.___20ware___20Noorden___20in___20graad",
 			"Windsnelheid___20Lucht___20t.o.v.___20Mean___20Sea___20Level___20in___20m___2Fs"
@@ -60,11 +60,10 @@ export class AppComponent {
 				SurfsupMapTheme.ThemeColor.orange
 			)
 
-			const legendText = points[0].data.quantity.parameter.name;
+			const legendText = points[0].properties.data.quantity.parameter.name;
 
 			this.surfsupMapLayerService.addLayer(points, symbology, legendText);
 		});
-
 	}
 
 }

@@ -1,10 +1,13 @@
-import { Injectable } from '@angular/core';
+import { Injectable, ComponentRef } from '@angular/core';
 import { MapMainService } from '../map/map-main.service';
+
+import { PopupService } from '../popup/popup.service';
+import { SurfsupMapPopupComponent } from '../../components/popup/surfsup-map-popup/surfsup-map-popup.component';
+
 import { SurfsupMapSymbology } from '../../surfsup-map/surfsup-map-symbology';
 import * as SurfsupMapIcon from "../../surfsup-map/surfsup-map-icon";
-import { SurfsupMapPoint, SurfsupMapData } from '../../surfsup-map/surfsup-map-point';
-import * as SurfsupMapMarker from "../../surfsup-map/surfsup-map-marker";
-import { PopupService } from '../popup/popup.service';
+import { SurfsupMapPoint } from '../../surfsup-map/surfsup-map-point';
+import { SurfsupMapRecordGroup } from '../../surfsup-map/surfsup-map-record-group';
 
 
 interface WaterinfoLayer {
@@ -22,29 +25,26 @@ export class SurfsupLayerMapService {
 	constructor(private mapService: MapMainService, private popupService: PopupService) { }
 
 	addLayer(points: SurfsupMapPoint[], symbology: SurfsupMapSymbology, legendText?: string) {
-//		addLayer(markers: L.Marker[], symbology: SurfsupMapSymbology, legendText?: string) {
-		//const layerDescription = this.getLayerDescription()
 		
 		const markers: L.Marker[] = [];
 		points.forEach(point => {
-			const markerOptions: SurfsupMapMarker.SurfsupMapMarkerOptions = {
-				point: point,
-				symbology: symbology
+			const marker = point.marker(symbology);
+			const setInstanceData = (componentRef: ComponentRef<SurfsupMapPopupComponent>) => {
+				componentRef.instance.value = point.properties.data.quantity.value;
+				componentRef.instance.unit = point.properties.data.quantity.parameter.unit;
+				componentRef.instance.name = point.properties.name;
+				componentRef.instance.datetime = point.properties.data.quantity.datetime;
+
+				const parameters: string[] = [];
+				parameters.push(point.properties.data.quantity.parameter.id);
+				if(point.properties.data.direction && parameters.indexOf(point.properties.data.direction.parameter.id) < 0) parameters.push(point.properties.data.direction.parameter.id);
+				if(point.properties.data.label && parameters.indexOf(point.properties.data.label.parameter.id) < 0) parameters.push(point.properties.data.label.parameter.id);
+				
+				const url  = `https://waterinfo.rws.nl/#!/details/expert/${point.properties.group}/${point.properties.locationCode}/${parameters.join(",")}`
+				componentRef.instance.waterinfoUrl = url;
 			}
-			const marker = SurfsupMapMarker.get(markerOptions);
-			this.popupService.register(marker, "Hoi");
+			this.popupService.register(marker, SurfsupMapPopupComponent, setInstanceData);
 			markers.push(marker);
-			// marker.bindPopup(`
-			// 	<div>
-			// 	<h3>Popup!</h3>
-			// 	<ng-template appPopup></ng-template>
-			// 	</div>
-			// `);
-
-			// marker.on('click', (e) => {
-
-			// 	console.log("click");
-			// });
 		});
 
 		const layerId = this.mapService.addLayerGroup(markers);
@@ -60,7 +60,6 @@ export class SurfsupLayerMapService {
 
 	private getLayerDescription (layerId: number, legendText: string, symbology: SurfsupMapSymbology) {
 		const legendIcon = this.getLegendIcon(layerId, legendText, symbology);
-        //const layer = this.getLayerById(layerId);
         if(!legendIcon) {
             return;
         }
@@ -70,7 +69,7 @@ export class SurfsupLayerMapService {
 	}
 
 	private getLegendIcon(layerId: number, legendText: string, symbology: SurfsupMapSymbology) {
-		const data: SurfsupMapData = {
+		const data: SurfsupMapRecordGroup = {
 			quantity: {
 				datetime: new Date(), 
 				value: symbology.legendIconValue,

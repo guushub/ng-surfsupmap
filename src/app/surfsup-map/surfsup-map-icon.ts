@@ -1,7 +1,7 @@
 import * as L from 'leaflet';
 
 import { SurfsupMapSymbology } from "./surfsup-map-symbology";
-import { SurfsupMapPoint, SurfsupMapData } from './surfsup-map-point';
+import { SurfsupMapRecordGroup } from './surfsup-map-record-group';
 
 export const get = (options: SurfsupMapIconOptions) => {
     const quantityValue = options.data.quantity;
@@ -11,19 +11,14 @@ export const get = (options: SurfsupMapIconOptions) => {
         iconSize: L.point(iconSize, iconSize),
         html: getHtml(options)
     }
-    // const divIcon = L.divIcon(divIconOptions) as SurfsupMapIcon;
     const divIcon = L.divIcon(divIconOptions);
     return divIcon;
 }
 
 export interface SurfsupMapIconOptions {
-    data: SurfsupMapData;
+    data: SurfsupMapRecordGroup;
     symbologyOptions: SurfsupMapSymbology;
 }
-
-// class SurfsupMapIcon extends L.DivIcon {
-//     id?: string;
-// }
 
 const getHtml = (options: SurfsupMapIconOptions) => {
     const quantityValue = options.data.quantity.value;

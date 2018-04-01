@@ -6,7 +6,11 @@ import { Component, OnInit, OnDestroy, ComponentFactoryResolver, ViewChild } fro
   styleUrls: ['./surfsup-map-popup.component.css']
 })
 export class SurfsupMapPopupComponent implements OnInit, OnDestroy {
-  public testVar: string;
+  public name: string;
+  public waterinfoUrl: string;
+  public value: number; 
+  public unit: string;
+  public datetime: Date;
 
   constructor() { }
 
