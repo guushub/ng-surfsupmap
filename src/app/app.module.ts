@@ -5,7 +5,7 @@ import { NgModule } from '@angular/core';
 
 // services
 import { MapMainService } from './services/map/map-main.service';
-import { SurfsupLayerMapService } from './services/layer/surfsup-map-layer.service';
+import { SurfsupMapLayerService } from './services/layer/surfsup-map-layer.service';
 import { WaterinfoService } from './services/waterinfo/waterinfo.service';
 import { PopupService } from './services/popup/popup.service';
 
@@ -29,7 +29,7 @@ import { SurfsupMapLayerAddComponent } from './components/surfsup-map-layer-add/
     ],
     providers: [
         MapMainService,
-        SurfsupLayerMapService,
+        SurfsupMapLayerService,
         WaterinfoService,
         PopupService
     ],

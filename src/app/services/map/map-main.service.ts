@@ -1,6 +1,6 @@
-import { Injectable, ComponentFactoryResolver, Injector, ApplicationRef } from '@angular/core';
+import { Injectable, ComponentFactoryResolver, Injector, ApplicationRef, Type } from '@angular/core';
 import * as L from 'leaflet';
-import { SurfsupMapLayerAddComponent } from '../../components/surfsup-map-layer-add/surfsup-map-layer-add.component';
+//import { SurfsupMapLayerAddComponent } from '../../components/surfsup-map-layer-add/surfsup-map-layer-add.component';
 
 
 @Injectable()
@@ -126,10 +126,10 @@ export class MapMainService {
         this.layerControl = L.control.layers();
         this.map.addControl(this.layerControl);
 
-        this.injectComponentToControl();
+        //this.injectComponentToControl();
     }
 
-    private injectComponentToControl() {
+    injectComponentToControl(component: Type<{}>) {
         
         const componentControl = L.Control.extend({
             options: {
@@ -143,7 +143,7 @@ export class MapMainService {
                 container.style.width = '100%';
                 container.style.height = '100%';
 
-                setTimeout(() => {this.loadComponent(container)});
+                setTimeout(() => {this.loadComponent(container, component)});
 
                 return container;
             }   
@@ -153,8 +153,8 @@ export class MapMainService {
 
     }
 
-    private loadComponent(container) {
-        const compFactory = this.cfr.resolveComponentFactory(SurfsupMapLayerAddComponent);
+    private loadComponent(container, component: Type<{}>) {
+        const compFactory = this.cfr.resolveComponentFactory(component);
         const componentRef = compFactory.create(this.injector);
         this.appRef.attachView(componentRef.hostView);
         componentRef.onDestroy(() => {

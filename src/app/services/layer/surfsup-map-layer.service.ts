@@ -18,7 +18,7 @@ interface WaterinfoLayer {
 
 
 @Injectable()
-export class SurfsupLayerMapService {
+export class SurfsupMapLayerService {
 
 	private layers: { [layerId: string]: WaterinfoLayer } = {};
 

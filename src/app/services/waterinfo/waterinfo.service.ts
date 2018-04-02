@@ -73,7 +73,7 @@ export class WaterinfoService {
             const url = `http://prodigyrood/proxy/proxy.ashx`;
             const params = encodeURIComponent("https://waterinfo.rws.nl/api/nav/allgroups");
             this.groups = this.http.get<Observable<WaterinfoGroup[]>>(`${url}?${params}`) 
-            .publishReplay(1)
+            .publishReplay(1) //cache
             .refCount()
             .catch(this.handleError);;
         } 

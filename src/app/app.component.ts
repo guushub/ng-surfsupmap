@@ -9,10 +9,11 @@ import { WaterinfoService } from './services/waterinfo/waterinfo.service';
 
 // services for map control
 import { MapMainService } from './services/map/map-main.service';
-import { SurfsupLayerMapService } from './services/layer/surfsup-map-layer.service';
+import { SurfsupMapLayerService } from './services/layer/surfsup-map-layer.service';
 
 // Stuff
 import * as SurfsupMapTheme from "./surfsup-map/surfsup-map-theme";
+import { SurfsupMapLayerAddComponent } from './components/surfsup-map-layer-add/surfsup-map-layer-add.component';
 
 @Component({
 	selector: 'app-root',
@@ -24,13 +25,13 @@ export class AppComponent {
 
 	constructor(private mapMainService: MapMainService,
 		private waterInfoService: WaterinfoService,
-		private surfsupMapLayerService: SurfsupLayerMapService) {
+		private surfsupMapLayerService: SurfsupMapLayerService) {
 
 	}
 
 	ngOnInit() {
 		this.mapMainService.setMap("map-main");
-		//this.mapMainService.injectComponentToControl();
+		this.mapMainService.injectComponentToControl(SurfsupMapLayerAddComponent);
 		
 		this.waterInfoService.getLatestAsSurfsupMapData(
 			"Golven",
