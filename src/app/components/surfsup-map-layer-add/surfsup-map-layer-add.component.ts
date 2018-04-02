@@ -10,6 +10,8 @@ import * as SurfsupMapTheme from "../../surfsup-map/surfsup-map-theme";
   styleUrls: ['./surfsup-map-layer-add.component.css']
 })
 export class SurfsupMapLayerAddComponent implements OnInit {
+  private surfsupMapGroupsAllowed = ["golven", "wind", "watertemperatuur"];
+
   private active: boolean;
   private step: number;
   private canAdd = false;
@@ -33,7 +35,7 @@ export class SurfsupMapLayerAddComponent implements OnInit {
       this.active = true;
       this.waterinfoService.getGroups()
       .subscribe(groups => {
-        this.waterinfoGroups = groups;
+        this.waterinfoGroups = groups.filter(group => this.surfsupMapGroupsAllowed.indexOf(group.label.toLowerCase()) > -1);
         this.step = 1;
       })
     } else {

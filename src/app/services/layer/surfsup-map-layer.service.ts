@@ -21,6 +21,7 @@ interface WaterinfoLayer {
 export class SurfsupMapLayerService {
 
 	private layers: { [layerId: string]: WaterinfoLayer } = {};
+    private locationCodesAllowed = [4755, 2173, 4807, 1310, 3874, 4127, 2719, 4586, 3283, 2721, 2175, 1073, 1617, 1092, 1075, 3905, 4953, 4455, 4864, 4865, 516];
 
 	constructor(private mapService: MapMainService, private popupService: PopupService) { }
 
@@ -28,12 +29,17 @@ export class SurfsupMapLayerService {
 		
 		const markers: L.Marker[] = [];
 		points.forEach(point => {
+			if(point.properties.group.toLowerCase() === "wind" && this.locationCodesAllowed.indexOf(Number(point.properties.locationCode)) === -1) {
+				return;
+			}
+
 			const marker = point.marker(symbology);
 			const setInstanceData = (componentRef: ComponentRef<SurfsupMapPopupComponent>) => {
 				componentRef.instance.init(point);
 			}
 			this.popupService.register(marker, SurfsupMapPopupComponent, setInstanceData);
 			markers.push(marker);
+			
 		});
 
 		const layerId = this.mapService.addLayerGroup(markers);

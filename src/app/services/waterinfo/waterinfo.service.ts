@@ -55,7 +55,7 @@ export interface WaterinfoGroup {
 export class WaterinfoService {
 
     private groups: Observable<WaterinfoGroup[]>;
-
+    
     constructor(private http: HttpClient) {
 
     }
@@ -72,7 +72,7 @@ export class WaterinfoService {
         if(!this.groups) {
             const url = `http://prodigyrood/proxy/proxy.ashx`;
             const params = encodeURIComponent("https://waterinfo.rws.nl/api/nav/allgroups");
-            this.groups = this.http.get<Observable<WaterinfoGroup[]>>(`${url}?${params}`) 
+            this.groups = this.http.get<Observable<WaterinfoGroup[]>>(`${url}?${params}`)
             .publishReplay(1) //cache
             .refCount()
             .catch(this.handleError);;
@@ -120,7 +120,16 @@ export class WaterinfoService {
         quantityLatest.features.forEach(feature => {
             const properties = feature.properties as WaterinfoProperties;
             const quantityRecord = this.waterinfoPropertiesToSurfsupMapRecord(properties, quantityLatest.parameter);
-            //const location = this.getLatLng(feature.geometry.coordinates)
+            // TODO checks for certain values to ignore (create validation object)
+            if (properties.measurements[0].latestValue > 9999) {
+                return;
+            }
+
+            if (new Date().getTime() - new Date(properties.measurements[0].dateTime).getTime() > 3600000) {
+                // data is older than an hour.
+                return;
+            }
+
             const point = new SurfsupMapPoint({
                     data: { quantity: quantityRecord },
                     group: group,
@@ -134,10 +143,7 @@ export class WaterinfoService {
                 feature.crs.properties["name"] 
             );
 
-            // TODO check for certain values to ignore (create validation object)
-            if (properties.measurements[0].latestValue > 9999) {
-                return;
-            }
+
             stationDict[properties.locationCode] = point;
 
         });
@@ -149,11 +155,18 @@ export class WaterinfoService {
                 if (!(properties.locationCode in stationDict)) {
                     return;
                 }
-
+                
                 // TODO check for certain values to ignore (create validation object)
                 if (properties.measurements[0].latestValue > 360) {
                     return;
                 }
+
+                const dataQuantity = stationDict[properties.locationCode].properties.data.quantity;
+                if (new Date(dataQuantity.datetime).getTime() - new Date(properties.measurements[0].dateTime).getTime() > 3600000) {
+                    // Direction data is older than an hour compared to quantity data
+                    return;
+                }
+
                 const directionRecord = this.waterinfoPropertiesToSurfsupMapRecord(properties, directionLatest.parameter);
                 stationDict[properties.locationCode].properties.data.direction = directionRecord;
             });
@@ -169,6 +182,13 @@ export class WaterinfoService {
                 if (properties.measurements[0].latestValue > 9999) {
                     return;
                 }
+
+                const dataQuantity = stationDict[properties.locationCode].properties.data.quantity;
+                if (new Date(dataQuantity.datetime).getTime() - new Date(properties.measurements[0].dateTime).getTime() > 3600000) {
+                    // Label data is older than an hour compared to quantity data
+                    return;
+                }
+
                 const labelRecord = this.waterinfoPropertiesToSurfsupMapRecord(properties, labelLatest.parameter);
                 stationDict[properties.locationCode].properties.data.label = labelRecord;
             });

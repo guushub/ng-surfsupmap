@@ -87,7 +87,7 @@ export class MapMainService {
 
     private addPane(layerId: number) {
         const paneId = `pane-${layerId}`;
-        const zIndex = this.zIndexBase + layerId;
+        const zIndex = this.zIndexBase + 5 * layerId;
 
         if (!this.map.getPane(paneId)) {
             this.map.createPane(paneId);
