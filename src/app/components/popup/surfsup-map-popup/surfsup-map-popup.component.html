@@ -1,5 +1,5 @@
 <h3>{{point.properties.name}} ({{point.properties.group | lowercase}})</h3>
-{{point.properties.data.quantity.parameter.name}}<br/>
-<a target="_blank" href="{{waterinfoUrl}}">Meer info</a><br>
+<a target="_blank" href="{{waterinfoUrl}}">Meer info</a><br><br/>
+{{point.properties.data.quantity.parameter.name}}: <br/>
 <b>{{point.properties.data.quantity.value}} {{point.properties.data.quantity.parameter.unit}}</b><br>
-{{point.properties.data.quantity.datetime | date: 'dd-MM-yyyy HH:m'}}
+{{point.properties.data.quantity.datetime | date: 'dd-MM-yyyy HH:mm'}}
