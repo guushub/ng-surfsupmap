@@ -247,16 +247,6 @@ export class WaterinfoService {
             });
     }
 
-    //TODO make projection service.
-    // private getLatLng(coordinates: number[]) {
-    //     // workaround for proj4 in webpack and typescript; it would give proj4 is not a function error otherwise.
-    //     const proj4 = (proj4x as any).default;
-
-    //     const coords = proj4("+proj=utm +zone=31 +ellps=GRS80 +units=m +no_defs", "EPSG:4326", [coordinates[0], coordinates[1]]);
-    //     const latLng = L.latLng(coords[1], coords[0]);
-    //     return latLng;
-    // }
-
     private handleError(error: Response): ErrorObservable {
         console.log(error);
         return Observable.throw(error.statusText);

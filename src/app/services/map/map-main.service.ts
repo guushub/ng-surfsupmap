@@ -81,10 +81,6 @@ export class MapMainService {
         return layerId;
     }
 
-    addMarkersToLayer(markers: L.Marker[], paneId: string) {
-        
-    }
-
     private addPane(layerId: number) {
         const paneId = `pane-${layerId}`;
         const zIndex = this.zIndexBase + 5 * layerId;
@@ -112,13 +108,17 @@ export class MapMainService {
     }
 
     private getNewLayerGroupId() {
-        let maxId = 0;
-        for(let key in this.layerGroups) {
-            const n = Number(key);
-            maxId = n > maxId ? n : maxId;
+        let maxIdCurrent = 0;
+        if(!this.layerGroups || Object.keys(this.layerGroups).length <= 0) {
+            return maxIdCurrent;
         }
 
-        return maxId ? maxId + 1 : maxId;
+        for(let key in this.layerGroups) {
+            const n = Number(key);
+            maxIdCurrent = n > maxIdCurrent ? n : maxIdCurrent;
+        }
+
+        return maxIdCurrent + 1;
     }
 
     private addControls() {
