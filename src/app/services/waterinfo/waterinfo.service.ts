@@ -13,6 +13,7 @@ import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
 import { SurfsupMapPoint } from '../../surfsup-map/surfsup-map-point';
 import { SurfsupMapRecord } from '../../surfsup-map/surfsup-map-record';
 import { SurfsupMapParameter } from '../../surfsup-map/surfsup-map-parameter';
+import { environment } from 'environments/environment';
 
 interface WaterinfoLatestMeasurement {
     latestValue: number;
@@ -62,7 +63,7 @@ export class WaterinfoService {
 
     /* API interaction */
     getLatest(parameterIds: string): Observable<GeoJSON.FeatureCollection<WaterinfoPoint>> {
-        const url = `http://prodigyrood/proxy/proxy.ashx`;
+        const url = environment.proxyUrl;
         const params = encodeURIComponent(`http://waterinfo.rws.nl/api/point/latestmeasurements?parameterIds=${parameterIds}`)
         return this.http.get<GeoJSON.FeatureCollection<WaterinfoPoint>>(`${url}?${params}`)
             .catch(this.handleError);
@@ -70,7 +71,7 @@ export class WaterinfoService {
 
     getGroups(): Observable<WaterinfoGroup[]> {
         if(!this.groups) {
-            const url = `http://prodigyrood/proxy/proxy.ashx`;
+            const url = environment.proxyUrl;;
             const params = encodeURIComponent("https://waterinfo.rws.nl/api/nav/allgroups");
             this.groups = this.http.get<Observable<WaterinfoGroup[]>>(`${url}?${params}`)
             .publishReplay(1) //cache
