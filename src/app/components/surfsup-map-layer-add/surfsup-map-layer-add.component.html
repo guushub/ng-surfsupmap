@@ -50,13 +50,14 @@
 		</div>
 
 		<button *ngIf="step>1" class="surfsup-map-layer-add-button-back" (click)="back()">Vorige</button> 
+		<button *ngIf="canAdd" class="surfsup-map-layer-add-button-next" (click)="next()">Volgende</button> 
 		<button *ngIf="canAdd" class="surfsup-map-layer-add-button-addlayer" (click)="addLayer()">Toevoegen</button> 
 		<button *ngIf="isAdded" class="surfsup-map-layer-add-button-ok" (click)="finalize()">OK</button> 
 
 	</div>
 
 	<div>
-		<button class="surfsup-map-layer-add-button-toggle" (click)="active = !active">{{active ? '^' : '+'}}</button> 
+		<button class="surfsup-map-layer-add-button-toggle" (click)="toggle()">{{active ? '^' : '+'}}</button> 
 	</div>
 	 
 </div>
