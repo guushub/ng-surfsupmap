@@ -27,6 +27,10 @@ html, body {
 .leaflet-popup {
     width: 250px;
 }
+
+.leaflet-control-layers-expanded {
+    width: 300px;
+}
 /*#map-main-container  {
     width: 100%;
     height: 100%;
