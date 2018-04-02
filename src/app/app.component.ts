@@ -1,9 +1,6 @@
 import { Component } from '@angular/core';
 import * as L from 'leaflet';
 
-// components
-import { MapPanelLeftComponent } from './components/map-panel/map-panel-left/map-panel-left.component';
-
 // services for data
 import { WaterinfoService } from './services/waterinfo/waterinfo.service';
 

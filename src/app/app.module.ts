@@ -11,14 +11,12 @@ import { PopupService } from './services/popup/popup.service';
 
 // components & directives
 import { AppComponent } from './app.component';
-import { MapPanelLeftComponent } from './components/map-panel/map-panel-left/map-panel-left.component';
 import { SurfsupMapPopupComponent } from './components/popup/surfsup-map-popup/surfsup-map-popup.component';
 import { SurfsupMapLayerAddComponent } from './components/surfsup-map-layer-add/surfsup-map-layer-add.component';
 
 @NgModule({
     declarations: [
         AppComponent,
-        MapPanelLeftComponent,
         SurfsupMapPopupComponent,
         SurfsupMapLayerAddComponent
     ],
