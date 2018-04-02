@@ -158,13 +158,13 @@ export class WaterinfoService {
                 
                 // TODO check for certain values to ignore (create validation object)
                 if (properties.measurements[0].latestValue > 360) {
-                    return;
+                    properties.measurements[0].latestValue = NaN;
                 }
 
                 const dataQuantity = stationDict[properties.locationCode].properties.data.quantity;
                 if (new Date(dataQuantity.datetime).getTime() - new Date(properties.measurements[0].dateTime).getTime() > 3600000) {
                     // Direction data is older than an hour compared to quantity data
-                    return;
+                    properties.measurements[0].latestValue = NaN;
                 }
 
                 const directionRecord = this.waterinfoPropertiesToSurfsupMapRecord(properties, directionLatest.parameter);
@@ -180,13 +180,13 @@ export class WaterinfoService {
                 }
                 // TODO check for certain values to ignore (create validation object)
                 if (properties.measurements[0].latestValue > 9999) {
-                    return;
+                    properties.measurements[0].latestValue = NaN;
                 }
 
                 const dataQuantity = stationDict[properties.locationCode].properties.data.quantity;
                 if (new Date(dataQuantity.datetime).getTime() - new Date(properties.measurements[0].dateTime).getTime() > 3600000) {
                     // Label data is older than an hour compared to quantity data
-                    return;
+                    properties.measurements[0].latestValue = NaN;
                 }
 
                 const labelRecord = this.waterinfoPropertiesToSurfsupMapRecord(properties, labelLatest.parameter);
