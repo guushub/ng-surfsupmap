@@ -1,9 +1,46 @@
-<div class="surfsup-map-layer-add-panel">
-	<h3>Lagen toevoegen</h3>
-	<div class="surfsup-map-layer-add" *ngIf="active">
+<div >
 
+	<div *ngIf="active" class="container">
+			Je kan zelf je eigen lagen toevoegen aan de kaart, op basis van de RWS Waterinfo data. Selecteer eerst een groep.
+		<div class="row">
+			<div class="col-sm-6">
+				<div  class="btn-group" role="group" >
+					<div class="btn-group" role="group" *ngFor="let waterinfoGroup of waterinfoGroups">
+						<button type="button" class="btn btn-secondary btn-sm" *ngIf="waterinfoGroup == waterinfoGroupSelected" (click)="onWaterinfoGroupSelect(waterinfoGroup)">{{waterinfoGroup.label}}</button> 
+						<button type="button" class="btn btn-outline-secondary btn-sm" *ngIf="waterinfoGroup != waterinfoGroupSelected" (click)="onWaterinfoGroupSelect(waterinfoGroup)">{{waterinfoGroup.label}}</button> 
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-2">
+				Waarde
+			</div>
+			<div class="col-sm-2">
+				Richting
+			</div>
+			<div class="col-sm-2">
+				Label
+			</div>
+		</div>
 
-		<div class="surfsup-map-layer-add-select-group" *ngIf="step===1">
+	<div *ngFor="let waterinfoGroup of waterinfoGroups">
+		<div *ngIf="waterinfoGroup == waterinfoGroupSelected">
+			<div class="row" *ngFor="let parameter of waterinfoGroupSelected.parameters">
+					<div class="col-sm-6">
+						{{parameter.label | lowercase}}
+					</div>
+					<div class="col-sm-2">
+							<span *ngIf="!canBeDirection(parameter)">?</span>
+					</div>
+					<div class="col-sm-2">
+						<span *ngIf="canBeDirection(parameter)">?</span>
+					</div>
+					<div class="col-sm-2">
+						?
+					</div>
+			</div>
+		</div>
+	</div>
+		<!-- <div class="surfsup-map-layer-add-select-group" *ngIf="step===1">
 		Je kan zelf je eigen lagen toevoegen aan de kaart, op basis van de RWS Waterinfo data. Selecteer eerst een groep.			
 			<ul class="select-waterinfo-groups">
 				<li *ngFor="let waterinfoGroup of waterinfoGroups"
@@ -12,9 +49,9 @@
 					{{waterinfoGroup.label}}
 				</li>
 			</ul>
-		</div>
+		</div> -->
 
-		<div class="surfsup-map-layer-add-select-par" *ngIf="step===2">
+		<!-- <div class="surfsup-map-layer-add-select-par" *ngIf="step===2">
 		De geselecteerde groep <b><i>{{waterinfoGroupSelected.label | lowercase}}</i></b> heeft de volgende parameters beschikbaar. 
 		Selecteer een parameter voor de omvang van het symbool ("Hoofd waarde").
 			<ul class="select-waterinfo-parameters">
@@ -48,17 +85,16 @@
 					{{parameter.label}}
 				</li>
 			</ul>
+		</div> -->
+		<br/><br/>
+		<div  class="btn-group" role="group" >
+			<button type="button" class="btn btn-primary btn-sm" (click)="toggle()">Annuleren</button> 
+			<button type="button" class="btn btn-primary btn-sm" *ngIf="step>1" (click)="back()">Vorige</button> 
+			<button type="button" class="btn btn-primary btn-sm" *ngIf="canAdd" (click)="next()">Volgende</button> 
+			<button type="button" class="btn btn-primary btn-sm" *ngIf="canAdd" (click)="addLayer()">Toevoegen</button> 
+			<button type="button" class="btn btn-primary btn-sm" *ngIf="isAdded" (click)="finalize()">OK</button> 
 		</div>
 
-		<button *ngIf="step>1" class="surfsup-map-layer-add-button-back" (click)="back()">Vorige</button> 
-		<button *ngIf="canAdd" class="surfsup-map-layer-add-button-next" (click)="next()">Volgende</button> 
-		<button *ngIf="canAdd" class="surfsup-map-layer-add-button-addlayer" (click)="addLayer()">Toevoegen</button> 
-		<button *ngIf="isAdded" class="surfsup-map-layer-add-button-ok" (click)="finalize()">OK</button> 
-
 	</div>
-
-	<div>
-			<button class="surfsup-map-layer-add-button-toggle" (click)="toggle()">{{active ? '^' : '+'}}</button> 
-	</div>
-	 
+	<button *ngIf="!active" class="btn btn-primary btn-sm" (click)="toggle()">{{active ? 'Annuleren' : 'Lagen toevoegen'}}</button> 
 </div>

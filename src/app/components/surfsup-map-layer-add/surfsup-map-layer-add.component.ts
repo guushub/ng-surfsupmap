@@ -3,6 +3,10 @@ import { SurfsupMapLayerService } from '../../services/layer/surfsup-map-layer.s
 import { WaterinfoService, WaterinfoGroup, WaterinfoParameter } from '../../services/waterinfo/waterinfo.service';
 import * as SurfsupMapTheme from "../../surfsup-map/surfsup-map-theme";
 
+interface SurfsupMapFormInput {
+  parameter: WaterinfoParameter;
+  
+}
 
 @Component({
   selector: 'app-surfsup-map-layer-add',
@@ -103,6 +107,11 @@ export class SurfsupMapLayerAddComponent implements OnInit {
         return par;
       }
     });
+  }
+
+  private canBeDirection(parameter: WaterinfoParameter) {
+    const unit = this.getSlugUnit(parameter.slug);
+    return unit === "graad";
   }
 
   private onWaterinfoGroupSelect(waterinfoGroupSelected: WaterinfoGroup) {

@@ -138,10 +138,10 @@ export class MapMainService {
               },
              
             onAdd: (map) => {
-                const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-component');
+                const container = L.DomUtil.create('div', '');
                 container.style.backgroundColor = 'white';
-                container.style.width = '100%';
-                container.style.height = '100%';
+                // container.style.width = '100%';
+                // container.style.height = '100%';
 
                 setTimeout(() => {this.loadComponent(container, component)});
 
