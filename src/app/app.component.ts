@@ -36,6 +36,9 @@ export class AppComponent {
 				return this.addInitialLayerGolven();
 			})
 			.then(() => {
+				return this.addInitialLayerDeining();
+			})
+			.then(() => {
 
 			});
 		
@@ -76,6 +79,29 @@ export class AppComponent {
 				const symbology = SurfsupMapTheme.getSymbologyByTheme(
 					SurfsupMapTheme.ThemeType.cm,
 					SurfsupMapTheme.ThemeColor.purple
+				)
+	
+				const legendText = points[0].properties.data.quantity.parameter.name;
+	
+				this.surfsupMapLayerService.addLayer(points, symbology, legendText);
+				resolve();
+			});
+		});
+
+	}
+
+	addInitialLayerDeining() {
+		return new Promise((resolve, reject) => {
+			this.waterInfoService.getLatestAsSurfsupMapData(
+				"Golven",
+				"Significante___20deiningshoogte___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20100___20mHz___20in___20cm",
+				"Gem.___20richting___20deining___20tov___20ware___20noorden___20in___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20100___20mHz___20in___20graad",
+				"Significante___20deiningshoogte___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20100___20mHz___20in___20cm"
+			)
+			.subscribe((points) => {
+				const symbology = SurfsupMapTheme.getSymbologyByTheme(
+					SurfsupMapTheme.ThemeType.cm,
+					SurfsupMapTheme.ThemeColor.darkblue
 				)
 	
 				const legendText = points[0].properties.data.quantity.parameter.name;

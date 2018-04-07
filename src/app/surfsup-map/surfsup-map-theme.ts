@@ -54,6 +54,12 @@ const getThemeColors = (themeColor: ThemeColor): ThemeColorSettings => {
                 borderColor: "#ffa461",
                 fillColor: "#ffffff"
             }
+            
+        case ThemeColor.darkblue:
+            return { 
+                borderColor: "#154273",
+                fillColor: "#ffffff"
+            }
         default:
             return {
                 borderColor:  "#000000".replace(/0/g,() => (~~(Math.random()*16)).toString(16)),
@@ -92,7 +98,8 @@ export enum ThemeType {
 
 export enum ThemeColor {
     "purple",
-    "orange"
+    "orange",
+    "darkblue"
 }
 
 interface ThemeFontSettings {
