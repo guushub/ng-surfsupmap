@@ -17,7 +17,6 @@ export class SurfsupMapLayerAddComponent implements OnInit {
   private surfsupMapGroupsAllowed = ["golven", "wind", "watertemperatuur"];
 
   private active: boolean;
-  private step: number;
   private canAdd = false;
 
   private waterinfoGroups: WaterinfoGroup[] = [];
@@ -31,7 +30,6 @@ export class SurfsupMapLayerAddComponent implements OnInit {
 
   ngOnInit() {
     this.active = false;
-    this.step = 1;
   }
   
   toggle() {
@@ -39,8 +37,8 @@ export class SurfsupMapLayerAddComponent implements OnInit {
       this.active = true;
       this.waterinfoService.getGroups()
       .subscribe(groups => {
-        this.waterinfoGroups = groups.filter(group => this.surfsupMapGroupsAllowed.indexOf(group.label.toLowerCase()) > -1);
-        this.step = 1;
+        this.waterinfoGroups = groups.filter(group => this.surfsupMapGroupsAllowed.indexOf(group.slug.toLowerCase()) > -1);
+        this.waterinfoGroupSelected = groups.find(group => group.slug.toLowerCase() === "golven");
       })
     } else {
       this.active = false;
@@ -116,36 +114,37 @@ export class SurfsupMapLayerAddComponent implements OnInit {
 
   private onWaterinfoGroupSelect(waterinfoGroupSelected: WaterinfoGroup) {
     this.waterinfoGroupSelected = waterinfoGroupSelected;
-    this.next();
   }
 
-  private selectQuantityPar(parameter: WaterinfoParameter) {
-    this.quantityPar = parameter;
-    this.canAdd = true;
-    this.next();
+  private handleCheckboxQuantity(parameter: WaterinfoParameter) {
+    if(this.quantityPar === parameter) {
+      this.quantityPar = null;
+      this.canAdd = false;
+    } else {
+      this.quantityPar = parameter;
+      this.labelPar = !this.labelPar ? parameter : this.labelPar;
+      this.canAdd = true;
+    }
   }
 
-  private selectDirectionPar(parameter: WaterinfoParameter) {
-    this.directionPar = parameter;
-    this.next();
+  private handleCheckboxDirection(parameter: WaterinfoParameter) {
+    if(this.directionPar === parameter) {
+      this.directionPar = null;
+    } else {
+      this.directionPar = parameter;
+    }
   }
 
-  private selectLabelPar(parameter: WaterinfoParameter) {
-    this.labelPar = parameter;
-    this.next();
+  private handleCheckboxLabel(parameter: WaterinfoParameter) {
+    if(this.labelPar === parameter) {
+      this.labelPar = null;
+    } else {
+      this.labelPar = parameter;
+    }
   }
 
-  private back() {
-    if(this.step > 1) this.step -= 1;
-  }
-
-  private next() {
-    this.step += 1;
-  }
-
-  private reset() {
+   private reset() {
     this.active = false;
-    this.step = 1;
     this.canAdd = false;
   
     this.waterinfoGroups = [];

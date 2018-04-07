@@ -1,5 +1,37 @@
-<h3>{{point.properties.name}} ({{point.properties.group | lowercase}})</h3>
-<a target="_blank" href="{{waterinfoUrl}}">Meer info</a><br><br/>
-{{point.properties.data.quantity.parameter.name}}: <br/>
-<b>{{point.properties.data.quantity.value}} {{point.properties.data.quantity.parameter.unit}}</b><br>
-{{point.properties.data.quantity.datetime | date: 'dd-MM-yyyy HH:mm'}}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <h6>{{point.properties.name}} ({{point.properties.group | lowercase}})</h6>
+            <a target="_blank" href="{{waterinfoUrl}}">Meer info</a>
+        </div>
+    </div>
+    <div *ngIf="point.properties.data.quantity" class="row row-outlined">
+        <div class="col-sm-8">
+            {{point.properties.data.quantity.parameter.name}}
+        </div>
+        <div class="col-sm-4">
+            <b>{{point.properties.data.quantity.value}} {{point.properties.data.quantity.parameter.unit}}</b>
+            <br/> {{point.properties.data.quantity.datetime | date: 'dd-MM-yyyy HH:mm'}}
+        </div>
+    </div>
+    <div *ngIf="point.properties.data.direction" class="row row-outlined">
+        <div class="col-sm-8">
+            {{point.properties.data.direction.parameter.name}}
+        </div>
+        <div class="col-sm-4">
+            <b>{{point.properties.data.direction.value}} {{point.properties.data.direction.parameter.unit}}</b>
+            <br/> {{point.properties.data.direction.datetime | date: 'dd-MM-yyyy HH:mm'}}
+        </div>
+    </div>
+    <div *ngIf="point.properties.data.label && point.properties.data.label.parameter.name !== point.properties.data.quantity.parameter.name" 
+        class="row row-outlined">
+        <div class="col-sm-8">
+            {{point.properties.data.label.parameter.name}}
+        </div>
+        <div class="col-sm-4">
+            <b>{{point.properties.data.label.value}} {{point.properties.data.label.parameter.unit}}</b>
+            <br/> {{point.properties.data.label.datetime | date: 'dd-MM-yyyy HH:mm'}}
+        </div>
+    </div>
+
+</div>

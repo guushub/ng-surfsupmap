@@ -28,9 +28,12 @@ html, body {
 }
 
 .leaflet-popup {
-    width: 250px;
+    width: 350px;
 }
 
+.leaflet-control-layers-overlays {
+    max-width: 250px;
+}
 /* .leaflet-control-layers-expanded {
     width: 300px;
 } */

@@ -1,0 +1,24 @@
+.par-checkbox {
+    width: 20px;
+    height: 20px;
+}
+
+.row-outlined {
+    box-shadow: -.5px -.5px 0 .5px #000000, inset -1px -1px 0 0 #000000;
+}
+
+.par-row {
+    padding: 2px;
+}
+
+/* .parameter-control {
+    padding: 6px 10px 6px 6px;
+    background: #fff;
+    } */
+.parameter-control {
+    padding: 6px 10px 6px 6px;
+    color: #333;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+    background: #fff;
+    border-radius: 5px;
+}
