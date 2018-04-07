@@ -1,6 +1,6 @@
-<div class="parameter-control" >
+<div class="parameter-control" id="browser-size-ok">
 
-	<div *ngIf="active" class="container">
+	<div *ngIf="active" class="container" >
 			<p>Je kan zelf je eigen combinatie samenstellen. Selecteer de gewenste parameters en klik op "Toevoegen".</p>
 		<div class="row">
 			<div class="col-sm-6">
@@ -30,7 +30,7 @@
 						{{parameter.label}}
 					</div>
 					<div class="col-sm-2 text-center">
-						<input class="par-checkbox" *ngIf="!canBeDirection(parameter)" [checked]="parameter === quantityPar" (change)="handleCheckboxQuantity(parameter)" type="checkbox"> 
+						<input required class="par-checkbox" *ngIf="!canBeDirection(parameter)" [checked]="parameter === quantityPar" (change)="handleCheckboxQuantity(parameter)" type="checkbox"> 
 					</div>
 					<div class="col-sm-2 text-center">
 						<input class="par-checkbox" *ngIf="canBeDirection(parameter)" [checked]="parameter === directionPar" (change)="handleCheckboxDirection(parameter)" type="checkbox"> 
