@@ -9,6 +9,7 @@ import { SurfsupMapPoint } from '../../../surfsup-map/surfsup-map-point';
 export class SurfsupMapPopupComponent implements OnInit, OnDestroy {
   private point: SurfsupMapPoint;
   private waterinfoUrl: string;
+  private title: string;
 
   constructor() { }
 
@@ -33,5 +34,9 @@ export class SurfsupMapPopupComponent implements OnInit, OnDestroy {
     
     const url  = `https://waterinfo.rws.nl/#!/details/expert/${point.properties.group}/${point.properties.locationCode}/${parameters.join(",")}`
     return url;
+  }
+
+  private setTitle(point: SurfsupMapPoint) {
+
   }
 }
