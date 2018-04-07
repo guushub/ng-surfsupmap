@@ -7,9 +7,8 @@ import { SurfsupMapPoint } from '../../../surfsup-map/surfsup-map-point';
   styleUrls: ['./surfsup-map-popup.component.css']
 })
 export class SurfsupMapPopupComponent implements OnInit, OnDestroy {
-  private point: SurfsupMapPoint;
-  private waterinfoUrl: string;
-  private title: string;
+  point: SurfsupMapPoint;
+  waterinfoUrl: string;
 
   constructor() { }
 
@@ -36,7 +35,4 @@ export class SurfsupMapPopupComponent implements OnInit, OnDestroy {
     return url;
   }
 
-  private setTitle(point: SurfsupMapPoint) {
-
-  }
 }

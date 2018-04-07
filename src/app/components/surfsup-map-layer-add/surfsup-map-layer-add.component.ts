@@ -16,15 +16,15 @@ interface SurfsupMapFormInput {
 export class SurfsupMapLayerAddComponent implements OnInit {
   private surfsupMapGroupsAllowed = ["golven", "wind", "watertemperatuur"];
 
-  private active: boolean;
-  private canAdd = false;
+  active: boolean;
+  canAdd = false;
 
-  private waterinfoGroups: WaterinfoGroup[] = [];
-  private waterinfoGroupSelected: WaterinfoGroup;
+  waterinfoGroups: WaterinfoGroup[] = [];
+  waterinfoGroupSelected: WaterinfoGroup;
 
-  private quantityPar: WaterinfoParameter;
-  private directionPar: WaterinfoParameter;
-  private labelPar: WaterinfoParameter;
+  quantityPar: WaterinfoParameter;
+  directionPar: WaterinfoParameter;
+  labelPar: WaterinfoParameter;
 
   constructor(private waterinfoService: WaterinfoService, private surfsupMapLayerService: SurfsupMapLayerService) { }
 
