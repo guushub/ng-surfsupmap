@@ -25,7 +25,7 @@ const getThemeIconSize = (themeType: ThemeType) => {
         case ThemeType.s:
             return getIconSizeS;
         default:
-            return getIconSizeMs;
+            return getIconSizeCm;
     }
 }
 
@@ -38,7 +38,7 @@ const getThemeLegendIconValue = (themeType: ThemeType) => {
         case ThemeType.s:
             return 4.5;
         default:
-            return 5.0;
+            return 80;
     }
 }
 
