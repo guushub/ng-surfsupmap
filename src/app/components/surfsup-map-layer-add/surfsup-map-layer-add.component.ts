@@ -68,6 +68,13 @@ export class SurfsupMapLayerAddComponent implements OnInit {
     }
   }
 
+  private clearParameterSelection() {
+    this.quantityPar = null;
+    this.directionPar = null;
+    this.labelPar = null;
+    this.canAdd = false;
+  }
+
   private getThemeType(slug: string) {
     const unit = this.getSlugUnit(slug);
     switch (unit) {
@@ -113,6 +120,7 @@ export class SurfsupMapLayerAddComponent implements OnInit {
   }
 
   private onWaterinfoGroupSelect(waterinfoGroupSelected: WaterinfoGroup) {
+    this.clearParameterSelection();
     this.waterinfoGroupSelected = waterinfoGroupSelected;
   }
 
@@ -143,16 +151,15 @@ export class SurfsupMapLayerAddComponent implements OnInit {
     }
   }
 
-   private reset() {
+  private reset() {
     this.active = false;
     this.canAdd = false;
   
     this.waterinfoGroups = [];
     this.waterinfoGroupSelected = null;
-  
-    this.quantityPar = null;
-    this.directionPar = null;
-    this.labelPar = null;
+
+    this.clearParameterSelection();
+
   }
 
 }

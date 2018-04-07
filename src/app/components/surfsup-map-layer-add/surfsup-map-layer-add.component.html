@@ -1,7 +1,10 @@
 <div class="parameter-control" id="browser-size-ok">
-
+	<button *ngIf="active" type="button" class="close" aria-label="Close" (click)="toggle()">
+			<span aria-hidden="true">&times;</span>
+	</button>
 	<div *ngIf="active" class="container" >
 			<p>Je kan zelf je eigen combinatie samenstellen. Selecteer de gewenste parameters en klik op "Toevoegen".</p>
+
 		<div class="row">
 			<div class="col-sm-6">
 				<div  class="btn-group" role="group" >
@@ -12,7 +15,7 @@
 				</div>
 			</div>
 			<div class="col-sm-2 text-center">
-				<h6>Waarde</h6>
+				<h6>Waarde<span class="control-label">*</span></h6>
 			</div>
 			<div class="col-sm-2 text-center">
 				<h6>Richting</h6>
@@ -22,33 +25,30 @@
 			</div>
 		</div>
 
-	<div *ngFor="let waterinfoGroup of waterinfoGroups">
-		<div *ngIf="waterinfoGroup == waterinfoGroupSelected">
-			<div class="row par-row row-outlined" *ngFor="let parameter of waterinfoGroupSelected.parameters">
-				
-					<div class="col-sm-6">
-						{{parameter.label}}
-					</div>
-					<div class="col-sm-2 text-center">
-						<input required class="par-checkbox" *ngIf="!canBeDirection(parameter)" [checked]="parameter === quantityPar" (change)="handleCheckboxQuantity(parameter)" type="checkbox"> 
-					</div>
-					<div class="col-sm-2 text-center">
-						<input class="par-checkbox" *ngIf="canBeDirection(parameter)" [checked]="parameter === directionPar" (change)="handleCheckboxDirection(parameter)" type="checkbox"> 
-					</div>
-					<div class="col-sm-2 text-center">
-						<input class="par-checkbox" [checked]="parameter === labelPar" (change)="handleCheckboxLabel(parameter)" type="checkbox"> 
-					</div>
+		<div *ngFor="let waterinfoGroup of waterinfoGroups">
+			<div *ngIf="waterinfoGroup == waterinfoGroupSelected">
+				<div class="row par-row row-outlined" *ngFor="let parameter of waterinfoGroupSelected.parameters">
+					
+						<div class="col-sm-6">
+							{{parameter.label}}
+						</div>
+						<div class="col-sm-2 text-center">
+							<input required class="par-checkbox" *ngIf="!canBeDirection(parameter)" [checked]="parameter === quantityPar" (change)="handleCheckboxQuantity(parameter)" type="checkbox"> 
+						</div>
+						<div class="col-sm-2 text-center">
+							<input class="par-checkbox" *ngIf="canBeDirection(parameter)" [checked]="parameter === directionPar" (change)="handleCheckboxDirection(parameter)" type="checkbox"> 
+						</div>
+						<div class="col-sm-2 text-center">
+							<input class="par-checkbox" [checked]="parameter === labelPar" (change)="handleCheckboxLabel(parameter)" type="checkbox"> 
+						</div>
 
+				</div>
 			</div>
 		</div>
-	</div>
-		
-		<br/><br/>
-		<div  class="btn-group" role="group" >
-			<button type="button" class="btn btn-primary btn-sm" (click)="toggle()">Annuleren</button> 
-			<button type="button" class="btn btn-primary btn-sm" *ngIf="canAdd" (click)="addLayer()">Toevoegen</button> 
+		<div class="row mt-1">
+			<button *ngIf="canAdd" type="button" class="btn btn-success btn-sm" (click)="addLayer()">Toevoegen</button> 
 		</div>
+	</div><!--/class="container"-->
 
-	</div>
 	<button *ngIf="!active" class="btn btn-primary btn-sm" (click)="toggle()">{{active ? 'Annuleren' : 'Lagen toevoegen'}}</button> 
 </div>
