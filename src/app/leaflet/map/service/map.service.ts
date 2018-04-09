@@ -8,7 +8,7 @@ export class MapService {
     public baseMaps: L.Control.LayersObject;
     private layerGroups: { [layerGoupId: number]: L.LayerGroup } = {};
 
-    private layerControl: L.Control.Layers;
+    public layerControl: L.Control.Layers;
     private zIndexBase = 600;
 
     private layers = {};
@@ -59,27 +59,6 @@ export class MapService {
         this.addControls();
 
     }
-
-    addLayerGroup(markers: L.Marker[]) {
-        // Need layer id to be able to identify these markers as part of a group. 
-        // TODO: Can this have a race condition?
-        const layerId = this.getNewLayerGroupId();
-        
-        // Need a pane to identify markers as part of a group
-        const paneId = this.addPane(layerId);
-        
-        // Give markers the paneId
-        markers.forEach((marker) => {
-            marker.options.pane = paneId;
-        });
-
-        // Create and add layer.
-        const layer = L.layerGroup(markers);
-        this.layerGroups[layerId] = layer;
-        this.map.addLayer(layer);
-        return layerId;
-    }
-
     private addPane(layerId: number) {
         const paneId = `pane-${layerId}`;
         const zIndex = this.zIndexBase + 5 * layerId;
@@ -93,76 +72,54 @@ export class MapService {
     }
 
     
-    addOverlay(layerId: number, layerDescription: string) {
-        const layer = this.getLayerById(layerId);
-        this.layerControl.addOverlay(layer, layerDescription);
-    }
-
-
-    private getLayerById(layerId: number) {
-        if(layerId in this.layerGroups) {
-            return this.layerGroups[layerId];
-        }
-        return;
-    }
-
-    private getLayerIdByLayer(layer: L.LayerGroup) {
-        for (const layerId in this.layerGroups) {
-            if (this.layerGroups.hasOwnProperty(layerId)) {
-                if(this.layerGroups[layerId] === layer) {
-                    return Number(layerId);
-                }
-            }
-        }
-        return;
-    }
-
-    private getNewLayerGroupId() {
-        let maxIdCurrent = 0;
-        if(!this.layerGroups || Object.keys(this.layerGroups).length <= 0) {
-            return maxIdCurrent;
-        }
-
-        for(let key in this.layerGroups) {
-            const n = Number(key);
-            maxIdCurrent = n > maxIdCurrent ? n : maxIdCurrent;
-        }
-
-        return maxIdCurrent + 1;
-    }
+    // private getLayerIdByLayer(layer: L.LayerGroup) {
+    //     for (const layerId in this.layerGroups) {
+    //         if (this.layerGroups.hasOwnProperty(layerId)) {
+    //             if(this.layerGroups[layerId] === layer) {
+    //                 return Number(layerId);
+    //             }
+    //         }
+    //     }
+    //     return;
+    // }
 
     private addControls() {
         // Layer control
         const options: any = {
             sortLayers: true,
             sortFunction: (layerA: L.LayerGroup, layerB: L.LayerGroup) => {
-                const layerIdA = this.getLayerIdByLayer(layerA);
-                const layerIdB = this.getLayerIdByLayer(layerB);
+                const layerIdA = layerA.getPane().style.zIndex;
+                const layerIdB = layerB.getPane().style.zIndex;
                 return layerIdB > layerIdA;
             }
         }
         this.layerControl = L.control.layers(null, null, options);
         this.map.addControl(this.layerControl);
-
-        //this.injectComponentToControl();
     }
 
-    injectComponentToControl(component: Type<{}>) {
+    injectComponentToControl(component: Type<{}>, position: string) {
         
         const componentControl = L.Control.extend({
             options: {
-                position: 'topleft' 
+                position: position 
                 //control position - allowed: 'topleft', 'topright', 'bottomleft', 'bottomright'
               },
              
             onAdd: (map) => {
-                const container = L.DomUtil.create('div', '');
-                container.style.backgroundColor = 'white';
-                // container.style.width = '100%';
-                // container.style.height = '100%';
-
-                setTimeout(() => {this.loadComponent(container, component)});
-
+                const container = L.DomUtil.create('div');
+                // setTimeout(() => { this.loadComponent(container, component) });
+                setTimeout(() => {
+                    const compFactory = this.cfr.resolveComponentFactory(component);
+                    const componentRef = compFactory.create(this.injector);
+                    this.appRef.attachView(componentRef.hostView);
+                    componentRef.onDestroy(() => {
+                        this.appRef.detachView(componentRef.hostView);
+                    });
+            
+                    const html = componentRef.location.nativeElement;
+                    container.appendChild(html);
+                });
+                
                 return container;
             }   
         })
@@ -171,16 +128,16 @@ export class MapService {
 
     }
 
-    private loadComponent(container, component: Type<{}>) {
-        const compFactory = this.cfr.resolveComponentFactory(component);
-        const componentRef = compFactory.create(this.injector);
-        this.appRef.attachView(componentRef.hostView);
-        componentRef.onDestroy(() => {
-            this.appRef.detachView(componentRef.hostView);
-        });
+    // private loadComponent(container, component: Type<{}>) {
+    //     const compFactory = this.cfr.resolveComponentFactory(component);
+    //     const componentRef = compFactory.create(this.injector);
+    //     this.appRef.attachView(componentRef.hostView);
+    //     componentRef.onDestroy(() => {
+    //         this.appRef.detachView(componentRef.hostView);
+    //     });
 
-        const html = componentRef.location.nativeElement;
-        container.appendChild(html);
-    }
+    //     const html = componentRef.location.nativeElement;
+    //     container.appendChild(html);
+    // }
     
 }

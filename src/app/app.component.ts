@@ -20,6 +20,6 @@ export class AppComponent {
 
 	ngOnInit() {
 		this.mapMainService.setMap("map-main");
-		this.mapMainService.injectComponentToControl(SurfsupMapLayerComponent);	
+		this.mapMainService.injectComponentToControl(SurfsupMapLayerComponent, "topleft");	
 	}
 }
