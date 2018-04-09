@@ -3,17 +3,17 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from "rxjs/Observable";
 import 'rxjs/Rx';
 
+import { environment } from 'environments/environment';
+
 import * as L from 'leaflet';
 
-import { WaterinfoStation } from '../../map-elements/map-content/waterinfo/waterinfo';
-import { WaterinfoMeasurementGroup } from '../../map-elements/map-content/waterinfo/waterinfo-measurement-group';
-import { WaterinfoMeasurement } from '../../map-elements/map-content/waterinfo/waterinfo-measurement';
 import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
 
-import { SurfsupMapPoint } from '../../surfsup-map/surfsup-map-point';
-import { SurfsupMapRecord } from '../../surfsup-map/surfsup-map-record';
-import { SurfsupMapParameter } from '../../surfsup-map/surfsup-map-parameter';
-import { environment } from 'environments/environment';
+import { WaterinfoPoint as SurfsupMapPoint } from '../model/waterinfo-point';
+import { WaterinfoParameter } from '../model/waterinfo-parameter';
+import { WaterinfoGroup } from '../model/waterinfo-group';
+
+import { SurfsupMapParameter, SurfsupMapData } from '../../surfsup-map/surfsup-map-data/model/surfsup-map-data';
 
 interface WaterinfoLatestMeasurement {
     latestValue: number;
@@ -33,24 +33,10 @@ interface WaterinfoPoint extends GeoJSON.Point {
     properties: WaterinfoProperties
 }
 
-export interface WaterinfoParameter {
-    label: string;
-    slug: string;
-    synonyms: any[];
-}
-
 interface WaterinfoLatest {
     parameter: WaterinfoParameter;
     features: GeoJSON.Feature<WaterinfoPoint>[];
 }
-
-export interface WaterinfoGroup {
-    label: string;
-    defaultFavorite: boolean;
-    slug: string;
-    parameters: WaterinfoParameter[];
-}
-
 
 @Injectable()
 export class WaterinfoService {
@@ -204,7 +190,7 @@ export class WaterinfoService {
         return points;
     }
 
-    private waterinfoPropertiesToSurfsupMapRecord(properties: WaterinfoProperties, parameter: WaterinfoParameter): SurfsupMapRecord {
+    private waterinfoPropertiesToSurfsupMapRecord(properties: WaterinfoProperties, parameter: WaterinfoParameter): SurfsupMapData {
         const measurement = properties.measurements[0];
         const par: SurfsupMapParameter = {
             id: parameter.slug,
@@ -212,7 +198,7 @@ export class WaterinfoService {
             unit: measurement.unitCode            
         }
 
-        const surfsupMapRecord: SurfsupMapRecord = {
+        const surfsupMapRecord: SurfsupMapData = {
             datetime: new Date(measurement.dateTime),
             parameter: par,
             value: measurement.latestValue

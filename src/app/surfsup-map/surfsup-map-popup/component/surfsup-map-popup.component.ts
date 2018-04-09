@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ComponentFactoryResolver, ViewChild } from '@angular/core';
-import { SurfsupMapPoint } from '../../surfsup-map-point';
+import { SurfsupMapLocation } from '../../surfsup-map-layer/model/surfsup-map-layer';
 
 @Component({
   selector: 'app-surfsup-map-popup',
@@ -7,8 +7,7 @@ import { SurfsupMapPoint } from '../../surfsup-map-point';
   styleUrls: ['./surfsup-map-popup.component.css']
 })
 export class SurfsupMapPopupComponent implements OnInit, OnDestroy {
-  point: SurfsupMapPoint;
-  waterinfoUrl: string;
+  location: SurfsupMapLocation;
 
   constructor() { }
 
@@ -20,19 +19,8 @@ export class SurfsupMapPopupComponent implements OnInit, OnDestroy {
 
   }
   
-  init(point: SurfsupMapPoint) {
-    this.point = point;
-    this.waterinfoUrl = this.getWaterInfoUrl(point);
-  }
-
-  private getWaterInfoUrl(point: SurfsupMapPoint): string {
-    const parameters: string[] = [];
-    parameters.push(point.properties.data.quantity.parameter.id);
-    if(point.properties.data.direction && parameters.indexOf(point.properties.data.direction.parameter.id) < 0) parameters.push(point.properties.data.direction.parameter.id);
-    if(point.properties.data.label && parameters.indexOf(point.properties.data.label.parameter.id) < 0) parameters.push(point.properties.data.label.parameter.id);
-    
-    const url  = `https://waterinfo.rws.nl/#!/details/expert/${point.properties.group}/${point.properties.locationCode}/${parameters.join(",")}`
-    return url;
+  init(location: SurfsupMapLocation) {
+    this.location = location;
   }
 
 }

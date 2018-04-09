@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SurfsupMapLayerComponent } from './surfsup-map-layer.component';
+import { WaterinfoLayerComponent } from './waterinfo-layer.component';
 
 describe('SurfsupMapLayerComponent', () => {
-  let component: SurfsupMapLayerComponent;
-  let fixture: ComponentFixture<SurfsupMapLayerComponent>;
+  let component: WaterinfoLayerComponent;
+  let fixture: ComponentFixture<WaterinfoLayerComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SurfsupMapLayerComponent ]
+      declarations: [ WaterinfoLayerComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SurfsupMapLayerComponent);
+    fixture = TestBed.createComponent(WaterinfoLayerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

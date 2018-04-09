@@ -1,21 +1,21 @@
 import { Component, OnInit } from '@angular/core';
-import { SurfsupMapLayerService } from '../service/surfsup-map-layer.service';
-import * as SurfsupMapTheme from "../../surfsup-map-theme";
+import { SurfsupMapLayerService } from '../../surfsup-map/surfsup-map-layer/service/surfsup-map-layer.service'
 
-// TODO this component should only use surfsupmap services
-import { WaterinfoService, WaterinfoGroup, WaterinfoParameter } from '../../../waterinfo/service/waterinfo.service';
+import { WaterinfoService } from '../service/waterinfo.service';
+import { SurfsupMapLayer, SurfsupMapLocation, ThemeType, ThemeColor } from '../../surfsup-map/surfsup-map-layer/model/surfsup-map-layer';
 
-interface SurfsupMapFormInput {
-	parameter: WaterinfoParameter;
-	
-}
+import { WaterinfoPoint } from '../model/waterinfo-point';
+import { WaterinfoGroup } from '../model/waterinfo-group';
+import { WaterinfoParameter } from '../model/waterinfo-parameter';
 
 @Component({
-	selector: 'app-surfsup-map-layer',
-	templateUrl: './surfsup-map-layer.component.html',
-	styleUrls: ['./surfsup-map-layer.component.css']
+	selector: 'app-waterinfo-layer',
+	templateUrl: './waterinfo-layer.component.html',
+	styleUrls: ['./waterinfo-layer.component.css']
 })
-export class SurfsupMapLayerComponent implements OnInit {
+export class WaterinfoLayerComponent implements OnInit {
+
+    private windLocationCodesAllowed = [4755, 2173, 4807, 1310, 3874, 4127, 2719, 4586, 3283, 2721, 2175, 1073, 1617, 1092, 1075, 3905, 4953, 4455, 4864, 4865, 516];
 	private surfsupMapGroupsAllowed = ["golven", "wind", "watertemperatuur"];
 
 	active: boolean;
@@ -71,15 +71,50 @@ export class SurfsupMapLayerComponent implements OnInit {
 				this.labelPar ? this.labelPar.slug : this.quantityPar.slug
 			)
 			.subscribe((points) => {
-				const symbology = SurfsupMapTheme.getSymbologyByTheme(
-					this.getThemeType(this.quantityPar.slug)
-				)
-
-				const legendText = points[0].properties.data.quantity.parameter.name;
-				this.surfsupMapLayerService.addLayer(points, symbology, legendText);
+				const themeType = this.getThemeType(this.quantityPar.slug);
+				const locations = this.mapToLocations(points);
+				const layer = new SurfsupMapLayer(locations, themeType);
+				this.surfsupMapLayerService.addLayer(layer);
 				this.reset();
 			});
 		}
+	}
+
+	private mapToLocations(points: WaterinfoPoint[]) {
+		const locations: SurfsupMapLocation[] = points.map((point) => {
+			if(point.properties.group.toLowerCase() === "wind" && this.windLocationCodesAllowed.indexOf(Number(point.properties.locationCode)) === -1) {
+				return;
+			}
+
+			const location: SurfsupMapLocation = {
+				quantityData: point.properties.data.quantity,
+				directionData: point.properties.data.direction,
+				labelData: point.properties.data.label,
+				id: point.properties.locationCode,
+				name: point.properties.name,
+				latLng: point.latLng(),
+				attribution: this.getAttribution(point)
+			}
+			return location;
+		});
+
+		return locations.filter(location => !!location);
+	}
+
+
+	private getAttribution(point: WaterinfoPoint) {
+		const parameters: string[] = [];
+		parameters.push(point.properties.data.quantity.parameter.id);
+		if(point.properties.data.direction && parameters.indexOf(point.properties.data.direction.parameter.id) < 0) parameters.push(point.properties.data.direction.parameter.id);
+		if(point.properties.data.label && parameters.indexOf(point.properties.data.label.parameter.id) < 0) parameters.push(point.properties.data.label.parameter.id);
+		
+		const waterinfoUrl  = `https://waterinfo.rws.nl/#!/details/expert/${point.properties.group}/${point.properties.locationCode}/${parameters.join(",")}`
+		const attr = {
+			url: waterinfoUrl,
+			text: "Bron en grafieken: waterinfo.rws.nl"
+			
+		}
+		return attr;
 	}
 
 	private clearParameterSelection() {
@@ -93,15 +128,15 @@ export class SurfsupMapLayerComponent implements OnInit {
 		const unit = this.getSlugUnit(slug);
 		switch (unit) {
 			case "cm":
-				return SurfsupMapTheme.ThemeType.cm;
+				return ThemeType.cm;
 			case "m/s":
-				return SurfsupMapTheme.ThemeType["m/s"];
+				return ThemeType["m/s"];
 			case "m___2Fs":
-				return SurfsupMapTheme.ThemeType["m/s"];
+				return ThemeType["m/s"];
 			case "s":
-				return SurfsupMapTheme.ThemeType.s;
+				return ThemeType.s;
 			default:
-				return SurfsupMapTheme.ThemeType.cm;
+				return ThemeType.cm;
 		}
 	}
 
@@ -186,14 +221,9 @@ export class SurfsupMapLayerComponent implements OnInit {
 				"Windsnelheid___20Lucht___20t.o.v.___20Mean___20Sea___20Level___20in___20m___2Fs"
 			)
 			.subscribe((points) => {
-				const symbology = SurfsupMapTheme.getSymbologyByTheme(
-					SurfsupMapTheme.ThemeType["m/s"],
-					SurfsupMapTheme.ThemeColor.orange
-				)
-	
-				const legendText = points[0].properties.data.quantity.parameter.name;
-	
-				this.surfsupMapLayerService.addLayer(points, symbology, legendText);
+				const locations = this.mapToLocations(points);
+				const layer = new SurfsupMapLayer(locations, ThemeType["m/s"], ThemeColor.orange);
+				this.surfsupMapLayerService.addLayer(layer);
 				resolve();
 			});
 		});
@@ -209,14 +239,9 @@ export class SurfsupMapLayerComponent implements OnInit {
 				"Significante___20golfhoogte___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20500___20mHz___20in___20cm"
 			)
 			.subscribe((points) => {
-				const symbology = SurfsupMapTheme.getSymbologyByTheme(
-					SurfsupMapTheme.ThemeType.cm,
-					SurfsupMapTheme.ThemeColor.purple
-				)
-	
-				const legendText = points[0].properties.data.quantity.parameter.name;
-	
-				this.surfsupMapLayerService.addLayer(points, symbology, legendText);
+				const locations = this.mapToLocations(points);
+				const layer = new SurfsupMapLayer(locations, ThemeType.cm, ThemeColor.purple);
+				this.surfsupMapLayerService.addLayer(layer);
 				resolve();
 			});
 		});
@@ -232,14 +257,9 @@ export class SurfsupMapLayerComponent implements OnInit {
 				"Significante___20deiningshoogte___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20100___20mHz___20in___20cm"
 			)
 			.subscribe((points) => {
-				const symbology = SurfsupMapTheme.getSymbologyByTheme(
-					SurfsupMapTheme.ThemeType.cm,
-					SurfsupMapTheme.ThemeColor.darkblue
-				)
-	
-				const legendText = points[0].properties.data.quantity.parameter.name;
-	
-				this.surfsupMapLayerService.addLayer(points, symbology, legendText);
+				const locations = this.mapToLocations(points);
+				const layer = new SurfsupMapLayer(locations, ThemeType.cm, ThemeColor.darkblue);
+				this.surfsupMapLayerService.addLayer(layer);
 				resolve();
 			});
 		});

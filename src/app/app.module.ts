@@ -13,12 +13,12 @@ import { LayerService } from './leaflet/layer/service/layer.service';
 
 // Waterinfo
 import { WaterinfoService } from './waterinfo/service/waterinfo.service';
+import { WaterinfoLayerComponent } from './waterinfo/component/waterinfo-layer.component';
 
 // Surfsupmap
 import { SurfsupMapLayerService } from './surfsup-map/surfsup-map-layer/service/surfsup-map-layer.service';
-
+import { SurfsupMapIconService } from './surfsup-map/surfsup-map-icon/service/surfsup-map-icon.service';
 import { SurfsupMapPopupComponent } from './surfsup-map/surfsup-map-popup/component/surfsup-map-popup.component';
-import { SurfsupMapLayerComponent } from './surfsup-map/surfsup-map-layer/component/surfsup-map-layer.component';
 
 
 
@@ -26,7 +26,7 @@ import { SurfsupMapLayerComponent } from './surfsup-map/surfsup-map-layer/compon
     declarations: [
         AppComponent,
         SurfsupMapPopupComponent,
-        SurfsupMapLayerComponent
+        WaterinfoLayerComponent
     ],
     imports: [
         BrowserModule,
@@ -38,11 +38,12 @@ import { SurfsupMapLayerComponent } from './surfsup-map/surfsup-map-layer/compon
         PopupService,
         LayerService, 
         SurfsupMapLayerService,
+        SurfsupMapIconService,
         WaterinfoService
     ],
     entryComponents: [
         SurfsupMapPopupComponent,
-        SurfsupMapLayerComponent
+        WaterinfoLayerComponent
     ],
     bootstrap: [AppComponent]
 })
