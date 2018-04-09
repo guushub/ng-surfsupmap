@@ -1,13 +1,15 @@
 import { Injectable, ComponentRef } from '@angular/core';
-import { MapMainService } from '../map/map-main.service';
 
-import { PopupService } from '../popup/popup.service';
-import { SurfsupMapPopupComponent } from '../../components/popup/surfsup-map-popup/surfsup-map-popup.component';
+import { SurfsupMapPopupComponent } from '../../surfsup-map-popup/component/surfsup-map-popup.component';
 
-import { SurfsupMapSymbology } from '../../surfsup-map/surfsup-map-symbology';
-import * as SurfsupMapIcon from "../../surfsup-map/surfsup-map-icon";
-import { SurfsupMapPoint } from '../../surfsup-map/surfsup-map-point';
-import { SurfsupMapRecordGroup } from '../../surfsup-map/surfsup-map-record-group';
+import { SurfsupMapSymbology } from '../../surfsup-map-symbology';
+import * as SurfsupMapIcon from "../../surfsup-map-icon";
+import { SurfsupMapPoint } from '../../surfsup-map-point';
+import { SurfsupMapRecordGroup } from '../../surfsup-map-record-group';
+
+//TODO create a leaflet layer service and use that instead of these services:
+import { MapService } from '../../../leaflet/map/service/map.service';
+import { PopupService } from '../../../leaflet/popup/service/popup.service';
 
 
 interface WaterinfoLayer {
@@ -23,7 +25,7 @@ export class SurfsupMapLayerService {
 	private layers: { [layerId: string]: WaterinfoLayer } = {};
     private locationCodesAllowed = [4755, 2173, 4807, 1310, 3874, 4127, 2719, 4586, 3283, 2721, 2175, 1073, 1617, 1092, 1075, 3905, 4953, 4455, 4864, 4865, 516];
 
-	constructor(private mapService: MapMainService, private popupService: PopupService) { }
+	constructor(private mapService: MapService, private popupService: PopupService) { }
 
 	addLayer(points: SurfsupMapPoint[], symbology: SurfsupMapSymbology, legendText?: string) {
 		
@@ -48,7 +50,7 @@ export class SurfsupMapLayerService {
 		}
 	}
 
-	private addLayerOverlay(mapService: MapMainService, layerId: number, legendText: string, symbology: SurfsupMapSymbology) {
+	private addLayerOverlay(mapService: MapService, layerId: number, legendText: string, symbology: SurfsupMapSymbology) {
 		const layerDescription = this.getLayerDescription(layerId, legendText, symbology);
 		mapService.addOverlay(layerId, layerDescription);
 	}

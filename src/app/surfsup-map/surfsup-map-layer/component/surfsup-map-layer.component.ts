@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { SurfsupMapLayerService } from '../../services/layer/surfsup-map-layer.service';
-import { WaterinfoService, WaterinfoGroup, WaterinfoParameter } from '../../services/waterinfo/waterinfo.service';
-import * as SurfsupMapTheme from "../../surfsup-map/surfsup-map-theme";
+import { SurfsupMapLayerService } from '../service/surfsup-map-layer.service';
+import * as SurfsupMapTheme from "../../surfsup-map-theme";
+
+// TODO this component should only use surfsupmap services
+import { WaterinfoService, WaterinfoGroup, WaterinfoParameter } from '../../../waterinfo/service/waterinfo.service';
 
 interface SurfsupMapFormInput {
 	parameter: WaterinfoParameter;
@@ -9,11 +11,11 @@ interface SurfsupMapFormInput {
 }
 
 @Component({
-	selector: 'app-surfsup-map-layer-add',
-	templateUrl: './surfsup-map-layer-add.component.html',
-	styleUrls: ['./surfsup-map-layer-add.component.css']
+	selector: 'app-surfsup-map-layer',
+	templateUrl: './surfsup-map-layer.component.html',
+	styleUrls: ['./surfsup-map-layer.component.css']
 })
-export class SurfsupMapLayerAddComponent implements OnInit {
+export class SurfsupMapLayerComponent implements OnInit {
 	private surfsupMapGroupsAllowed = ["golven", "wind", "watertemperatuur"];
 
 	active: boolean;
@@ -30,6 +32,18 @@ export class SurfsupMapLayerAddComponent implements OnInit {
 
 	ngOnInit() {
 		this.active = false;
+		
+		// Make sure wave heights is top layer.
+		this.addInitialLayerWind()
+		.then(() => {
+			return this.addInitialLayerGolven();
+		})
+		.then(() => {
+			return this.addInitialLayerDeining();
+		})
+		.then(() => {
+
+		});
 	}
 	
 	toggle() {
@@ -160,6 +174,75 @@ export class SurfsupMapLayerAddComponent implements OnInit {
 		this.waterinfoGroupSelected = null;
 
 		this.clearParameterSelection();
+
+	}
+
+	addInitialLayerWind() {
+		return new Promise((resolve, reject) => {
+			this.waterinfoService.getLatestAsSurfsupMapData(
+				"Wind",
+				"Windsnelheid___20Lucht___20t.o.v.___20Mean___20Sea___20Level___20in___20m___2Fs",
+				"Windrichting___20Lucht___20t.o.v.___20ware___20Noorden___20in___20graad",
+				"Windsnelheid___20Lucht___20t.o.v.___20Mean___20Sea___20Level___20in___20m___2Fs"
+			)
+			.subscribe((points) => {
+				const symbology = SurfsupMapTheme.getSymbologyByTheme(
+					SurfsupMapTheme.ThemeType["m/s"],
+					SurfsupMapTheme.ThemeColor.orange
+				)
+	
+				const legendText = points[0].properties.data.quantity.parameter.name;
+	
+				this.surfsupMapLayerService.addLayer(points, symbology, legendText);
+				resolve();
+			});
+		});
+
+	}
+
+	addInitialLayerGolven() {
+		return new Promise((resolve, reject) => {
+			this.waterinfoService.getLatestAsSurfsupMapData(
+				"Golven",
+				"Significante___20golfhoogte___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20500___20mHz___20in___20cm",
+				"Gemiddelde___20golfrichting___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20500___20mHz___20in___20graad",
+				"Significante___20golfhoogte___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20500___20mHz___20in___20cm"
+			)
+			.subscribe((points) => {
+				const symbology = SurfsupMapTheme.getSymbologyByTheme(
+					SurfsupMapTheme.ThemeType.cm,
+					SurfsupMapTheme.ThemeColor.purple
+				)
+	
+				const legendText = points[0].properties.data.quantity.parameter.name;
+	
+				this.surfsupMapLayerService.addLayer(points, symbology, legendText);
+				resolve();
+			});
+		});
+
+	}
+
+	addInitialLayerDeining() {
+		return new Promise((resolve, reject) => {
+			this.waterinfoService.getLatestAsSurfsupMapData(
+				"Golven",
+				"Significante___20deiningshoogte___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20100___20mHz___20in___20cm",
+				"Gem.___20richting___20deining___20tov___20ware___20noorden___20in___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20100___20mHz___20in___20graad",
+				"Significante___20deiningshoogte___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20100___20mHz___20in___20cm"
+			)
+			.subscribe((points) => {
+				const symbology = SurfsupMapTheme.getSymbologyByTheme(
+					SurfsupMapTheme.ThemeType.cm,
+					SurfsupMapTheme.ThemeColor.darkblue
+				)
+	
+				const legendText = points[0].properties.data.quantity.parameter.name;
+	
+				this.surfsupMapLayerService.addLayer(points, symbology, legendText);
+				resolve();
+			});
+		});
 
 	}
 

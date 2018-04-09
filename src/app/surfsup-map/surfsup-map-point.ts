@@ -4,6 +4,19 @@ import { SurfsupMapSymbology } from "./surfsup-map-symbology";
 import { SurfsupMapRecordGroup } from "./surfsup-map-record-group";
 import * as SurfsupMapIcon from "./surfsup-map-icon";
 
+interface SurfsupMapMarkerOptions {
+    point: SurfsupMapPoint;
+    paneId?: string;
+    symbology: SurfsupMapSymbology;
+}
+
+interface SurfsupMapPointProperties {
+    locationCode: string;
+    name: string;
+    group: string;
+    data: SurfsupMapRecordGroup;
+}
+
 export class SurfsupMapPoint implements GeoJSON.Feature<GeoJSON.Point> {
     type: "Feature" = "Feature";
 	geometry: GeoJSON.Point = {
@@ -43,18 +56,5 @@ export class SurfsupMapPoint implements GeoJSON.Feature<GeoJSON.Point> {
         });
         return icon;
     }
-}
-
-interface SurfsupMapMarkerOptions {
-    point: SurfsupMapPoint;
-    paneId?: string;
-    symbology: SurfsupMapSymbology;
-}
-
-interface SurfsupMapPointProperties {
-    locationCode: string;
-    name: string;
-    group: string;
-    data: SurfsupMapRecordGroup;
 }
 

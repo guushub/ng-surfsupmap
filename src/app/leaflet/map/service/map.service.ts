@@ -1,10 +1,9 @@
 import { Injectable, ComponentFactoryResolver, Injector, ApplicationRef, Type } from '@angular/core';
 import * as L from 'leaflet';
-//import { SurfsupMapLayerAddComponent } from '../../components/surfsup-map-layer-add/surfsup-map-layer-add.component';
 
 
 @Injectable()
-export class MapMainService {
+export class MapService {
     public map: L.Map;
     public baseMaps: L.Control.LayersObject;
     private layerGroups: { [layerGoupId: number]: L.LayerGroup } = {};

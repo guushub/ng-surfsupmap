@@ -1,5 +1,4 @@
 import { Injectable, ComponentFactoryResolver, Injector, ApplicationRef, ComponentRef, Type } from '@angular/core';
-import { SurfsupMapPopupComponent } from "../../components/popup/surfsup-map-popup/surfsup-map-popup.component";
 
 @Injectable()
 export class PopupService {

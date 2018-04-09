@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SurfsupMapLayerAddComponent } from './surfsup-map-layer-add.component';
+import { SurfsupMapLayerComponent } from './surfsup-map-layer.component';
 
-describe('SurfsupMapLayerAddComponent', () => {
-  let component: SurfsupMapLayerAddComponent;
-  let fixture: ComponentFixture<SurfsupMapLayerAddComponent>;
+describe('SurfsupMapLayerComponent', () => {
+  let component: SurfsupMapLayerComponent;
+  let fixture: ComponentFixture<SurfsupMapLayerComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SurfsupMapLayerAddComponent ]
+      declarations: [ SurfsupMapLayerComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SurfsupMapLayerAddComponent);
+    fixture = TestBed.createComponent(SurfsupMapLayerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

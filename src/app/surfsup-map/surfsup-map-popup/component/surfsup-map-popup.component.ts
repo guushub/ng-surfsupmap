@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ComponentFactoryResolver, ViewChild } from '@angular/core';
-import { SurfsupMapPoint } from '../../../surfsup-map/surfsup-map-point';
+import { SurfsupMapPoint } from '../../surfsup-map-point';
 
 @Component({
   selector: 'app-surfsup-map-popup',
