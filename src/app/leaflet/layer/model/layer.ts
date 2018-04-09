@@ -9,6 +9,10 @@ export class Layer {
     }
 
     createLayerGroup(layerId: number, paneId: string) {
+        this.markers.forEach(marker => {
+            marker.options.pane = paneId;
+        });
+
         this.layerGroup = L.layerGroup(this.markers, {pane: paneId});
         this.id = layerId;
         return this.layerGroup;
