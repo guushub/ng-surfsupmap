@@ -36,7 +36,7 @@ export class MapMainService {
 
     setMap(divId: string) {
         // Note that we can't set the map itself yet when constructing/initializing this service.  
-        // The dom is not ready yet, so call this from a component's 'ngOnInit()'. Something like:
+        // The dom is probably not ready yet, so call this from a component's 'ngOnInit()'. Something like:
         // this.mapMainService.setMap("map-main");   
 
         const map = L.map(divId, {
@@ -107,6 +107,17 @@ export class MapMainService {
         return;
     }
 
+    private getLayerIdByLayer(layer: L.LayerGroup) {
+        for (const layerId in this.layerGroups) {
+            if (this.layerGroups.hasOwnProperty(layerId)) {
+                if(this.layerGroups[layerId] === layer) {
+                    return Number(layerId);
+                }
+            }
+        }
+        return;
+    }
+
     private getNewLayerGroupId() {
         let maxIdCurrent = 0;
         if(!this.layerGroups || Object.keys(this.layerGroups).length <= 0) {
@@ -123,7 +134,15 @@ export class MapMainService {
 
     private addControls() {
         // Layer control
-        this.layerControl = L.control.layers();
+        const options: any = {
+            sortLayers: true,
+            sortFunction: (layerA: L.LayerGroup, layerB: L.LayerGroup) => {
+                const layerIdA = this.getLayerIdByLayer(layerA);
+                const layerIdB = this.getLayerIdByLayer(layerB);
+                return layerIdB > layerIdA;
+            }
+        }
+        this.layerControl = L.control.layers(null, null, options);
         this.map.addControl(this.layerControl);
 
         //this.injectComponentToControl();
