@@ -9,8 +9,7 @@ export const getSymbologyByTheme = (themeType: ThemeType, themeColor?: ThemeColo
         borderColor: colors.borderColor,
         fillColor: colors.fillColor,
         labelFontSize: font.labelFontSize,
-        labelFontFamily: font.labelFontFamily,
-        legendIconValue: getThemeLegendIconValue(themeType)
+        labelFontFamily: font.labelFontFamily
     }
 
     return symbology;
@@ -26,19 +25,6 @@ const getThemeIconSize = (themeType: ThemeType) => {
             return getIconSizeS;
         default:
             return getIconSizeCm;
-    }
-}
-
-const getThemeLegendIconValue = (themeType: ThemeType) => {
-    switch (themeType) {
-        case ThemeType.cm:
-            return 80;
-        case ThemeType["m/s"]:
-            return 5.0
-        case ThemeType.s:
-            return 4.5;
-        default:
-            return 80;
     }
 }
 

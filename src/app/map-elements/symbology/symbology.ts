@@ -7,5 +7,4 @@ export interface SymbologyClassifiedOptions {
 
 export interface SymbologyCalculatedOptions {
     getIconSize: {(val: number) : number};
-    legendIconValue: number;
 }

@@ -64,29 +64,12 @@ export class SurfsupMapLayerService {
 	}
 
 	private getLegendIcon(layerId: number, legendText: string, symbology: SurfsupMapSymbology) {
-		const data: SurfsupMapRecordGroup = {
-			quantity: {
-				datetime: new Date(), 
-				value: symbology.legendIconValue,
-				parameter: null
-			},
-			direction: {
-				datetime: new Date(), 
-				value: 270,
-				parameter: null
-			},
-			label: {
-				datetime: new Date(), 
-				value: symbology.legendIconValue,
-				parameter: null
-			}
-		}
 		const properties: SurfsupMapIcon.SurfsupMapIconOptions = {
-			data: data,
+			data: null,
 			symbologyOptions: symbology
 		}
 
-		const icon = SurfsupMapIcon.get(properties);
+		const icon = SurfsupMapIcon.get(properties, true);
 
 		return icon;
 	}
