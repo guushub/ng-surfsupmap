@@ -65,8 +65,8 @@ const generateHtml = (iconSize: number, directionValue: number, labelText: strin
                 fill: ${fillColor};
                 stroke: ${borderColor};'></circle>
                     <text text-anchor='middle' dy='0.3em' x='${iconSize / 2}' y='${iconSize / 2}' 
-                    style='font-family: ${fontFamily};
-                    font-size: ${fontSize};
+                    style='/*font-family: ${fontFamily};
+                    font-size: ${fontSize};*/
                     fill: ${borderColor};'>${labelText}</text>
                     ${polylineHtml}
                 </svg>`;
