@@ -1,12 +1,15 @@
 import { Component, OnInit } from '@angular/core';
+import 'rxjs/add/operator/toPromise';
+
 import { SurfsupMapLayerService } from '../../surfsup-map/surfsup-map-layer/service/surfsup-map-layer.service'
 
-import { WaterinfoService } from '../service/waterinfo.service';
+import { WaterinfoService, WaterinfoProperties, WaterinfoLatestMeasurement } from '../service/waterinfo.service';
 import { SurfsupMapLayer, SurfsupMapLocation, ThemeType, ThemeColor } from '../../surfsup-map/surfsup-map-layer/model/surfsup-map-layer';
 
 import { WaterinfoPoint } from '../model/waterinfo-point';
 import { WaterinfoGroup } from '../model/waterinfo-group';
 import { WaterinfoParameter } from '../model/waterinfo-parameter';
+import { WaterinfoSurfsupMapInput } from '../helper/waterinfo-utils';
 
 @Component({
 	selector: 'app-waterinfo-layer',
@@ -42,8 +45,9 @@ export class WaterinfoLayerComponent implements OnInit {
 			return this.addInitialLayerDeining();
 		})
 		.then(() => {
-
+			this.getCombined();
 		});
+
 	}
 	
 	toggle() {
@@ -224,6 +228,8 @@ export class WaterinfoLayerComponent implements OnInit {
 				const locations = this.mapToLocations(points);
 				const layer = new SurfsupMapLayer(locations, ThemeType["m/s"], ThemeColor.orange);
 				this.surfsupMapLayerService.addLayer(layer);
+
+
 				resolve();
 			});
 		});
@@ -263,6 +269,85 @@ export class WaterinfoLayerComponent implements OnInit {
 				resolve();
 			});
 		});
+
+	}
+
+	getCombined() {
+		const group = "Golven";
+		const parIdQuantity = "Significante___20deiningshoogte___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20100___20mHz___20in___20cm";
+		const parIdDirection = "Gem.___20richting___20deining___20tov___20ware___20noorden___20in___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20100___20mHz___20in___20graad";
+		const parIdLabel = "Significante___20deiningshoogte___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20100___20mHz___20in___20cm";
+
+		let parameterQuantity: WaterinfoParameter;
+		let parameterDirection: WaterinfoParameter;
+		let parameterLabel: WaterinfoParameter;
+		
+		// TODO: fork?
+		this.waterinfoService.getParameterById(parIdQuantity).toPromise()
+		.then(par => {
+			parameterQuantity = par;
+			return this.waterinfoService.getParameterById(parIdDirection).toPromise();
+		})
+		.then(par => {
+			parameterDirection = par;
+			return this.waterinfoService.getParameterById(parIdLabel).toPromise();
+		})
+		.then(par => {
+			parameterLabel = par;
+			return this.waterinfoService.getLatestCombined([parIdQuantity, parIdDirection, parIdLabel]).toPromise();
+		})
+		.then(featureCollection => {
+			const dataInput: WaterinfoSurfsupMapInput[] = [];
+			const features = featureCollection.features;
+
+			features.forEach((feature) => {
+				const properties = feature.properties as WaterinfoProperties;
+				if(properties.measurements.length > 0 && properties.measurements[0].parameterId === parIdQuantity) {
+					const nMeasurements = properties.measurements.length;
+					const quantityData = {
+						measurement: properties.measurements[0],
+						parameter: parameterQuantity
+					}
+
+					// TODO check if measurement exists.
+					let directionData;
+					if(parameterDirection && properties.measurements.length > 1 && properties.measurements[1].parameterId === parIdDirection) {
+						directionData = {
+							measurement: properties.measurements[1],
+							parameter: parameterDirection
+						}
+					}
+
+					let labelData;
+					if(parameterLabel && properties.measurements.length > 1 && properties.measurements[nMeasurements - 1].parameterId === parIdLabel) {
+						labelData = {
+							measurement: properties.measurements[nMeasurements - 1],
+							parameter: parameterLabel
+						}
+					}
+
+					const input: WaterinfoSurfsupMapInput = {
+						locationCode: properties.locationCode.toString(),
+						locationName: properties.name,
+						group: group,
+						coordinates: { x: feature.geometry.coordinates[0], y: feature.geometry.coordinates[1]},
+						quantityData: quantityData,
+						directionData: directionData,
+						labelData: labelData
+					}
+
+					dataInput.push(input);
+				}
+
+			});
+
+			console.log(dataInput);
+
+		});
+
+	}
+
+	private getParameterById() {
 
 	}
 

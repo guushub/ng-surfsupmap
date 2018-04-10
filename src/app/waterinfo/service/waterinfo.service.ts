@@ -15,14 +15,15 @@ import { WaterinfoGroup } from '../model/waterinfo-group';
 
 import { SurfsupMapParameter, SurfsupMapData } from '../../surfsup-map/surfsup-map-data/model/surfsup-map-data';
 
-interface WaterinfoLatestMeasurement {
+//TODO: move interfaces to model
+export interface WaterinfoLatestMeasurement {
     latestValue: number;
     dateTime: Date;
     unitCode: string;
     parameterId: string;
 }
 
-interface WaterinfoProperties {
+export interface WaterinfoProperties {
     name: string;
     measurements: WaterinfoLatestMeasurement[];
     locationCode: number;
@@ -33,7 +34,7 @@ interface WaterinfoPoint extends GeoJSON.Point {
     properties: WaterinfoProperties
 }
 
-interface WaterinfoLatest {
+export interface WaterinfoLatest {
     parameter: WaterinfoParameter;
     features: GeoJSON.Feature<WaterinfoPoint>[];
 }
@@ -57,7 +58,7 @@ export class WaterinfoService {
 
     getGroups(): Observable<WaterinfoGroup[]> {
         if(!this.groups) {
-            const url = environment.proxyUrl;;
+            const url = environment.proxyUrl;
             const params = encodeURIComponent("https://waterinfo.rws.nl/api/nav/allgroups");
             this.groups = this.http.get<Observable<WaterinfoGroup[]>>(`${url}?${params}`)
             .publishReplay(1) //cache
@@ -66,6 +67,14 @@ export class WaterinfoService {
         } 
         
         return this.groups;
+    }
+
+    getLatestCombined(parameterIds: string[]): Observable<GeoJSON.FeatureCollection<WaterinfoPoint>>  {
+        const url = environment.proxyUrl;
+        const queryString = parameterIds.map(parameterId => `parameterIds=${parameterId}`).join("&");
+        const params = encodeURIComponent(`http://waterinfo.rws.nl/api/point/latestmeasurements?${queryString}`)
+        return this.http.get<GeoJSON.FeatureCollection<WaterinfoPoint>>(`${url}?${params}`)
+            .catch(this.handleError);
     }
 
     getLatestAsSurfsupMapData(group: string, parQuantity: string, parDirection?: string, parLabel?: string): Observable<SurfsupMapPoint[]> {
@@ -219,7 +228,7 @@ export class WaterinfoService {
             .catch(err => this.handleError(err));
     }
 
-    private getParameterById(parameterId: string): Observable<WaterinfoParameter> {
+    getParameterById(parameterId: string): Observable<WaterinfoParameter> {
     
         return this.getGroups()
             .map(groups => {
