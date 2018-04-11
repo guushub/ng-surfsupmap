@@ -14,7 +14,7 @@ import { WaterinfoService } from '../service/waterinfo.service';
 })
 export class WaterinfoLayerComponent implements OnInit {
 
-    private windLocationCodesAllowed = [4755, 2173, 4807, 1310, 3874, 4127, 2719, 4586, 3283, 2721, 2175, 1073, 1617, 1092, 1075, 3905, 4953, 4455, 4864, 4865, 516];
+    private windLocationCodesAllowed = [4529, 4755, 2173, 4807, 1310, 4127, 2719, 4586, 3283, 2721, 2175, 1073, 1617, 1092, 1075, 3905, 4953, 4455, 4864, 4865, 516];
 	private surfsupMapGroupsAllowed = ["golven", "wind", "watertemperatuur"];
 
 	active: boolean;
@@ -33,9 +33,9 @@ export class WaterinfoLayerComponent implements OnInit {
 		this.active = false;
 		
 		// Make sure wave heights is top layer.
-		this.addInitialLayerWind()
+		this.addInitialLayerGolven()
 		.then(() => {
-			return this.addInitialLayerGolven();
+			return this.addInitialLayerWind();
 		})
 		.then(() => {
 			return this.addInitialLayerDeining();
