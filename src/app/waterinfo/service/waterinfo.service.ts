@@ -60,7 +60,7 @@ export class WaterinfoService {
     }
 
     private handleError(error: Response): ErrorObservable {
-        console.log(error);
+        console.error(error);
         return Observable.throw(error.statusText);
     }
 
