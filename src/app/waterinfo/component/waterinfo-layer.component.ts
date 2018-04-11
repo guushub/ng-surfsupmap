@@ -3,13 +3,9 @@ import 'rxjs/add/operator/toPromise';
 
 import { SurfsupMapLayerService } from '../../surfsup-map/surfsup-map-layer/service/surfsup-map-layer.service'
 
-import { WaterinfoService, WaterinfoProperties, WaterinfoLatestMeasurement } from '../service/waterinfo.service';
-import { SurfsupMapLayer, SurfsupMapLocation, ThemeType, ThemeColor } from '../../surfsup-map/surfsup-map-layer/model/surfsup-map-layer';
-
-import { WaterinfoPoint } from '../model/waterinfo-point';
-import { WaterinfoGroup } from '../model/waterinfo-group';
-import { WaterinfoParameter } from '../model/waterinfo-parameter';
-import { WaterinfoSurfsupMapInput } from '../helper/waterinfo-utils';
+import * as Waterinfo from '../model/waterinfo';
+import { WaterinfoSurfsupMapInput, WaterinfoUtils } from '../helper/waterinfo-utils';
+import { WaterinfoService } from '../service/waterinfo.service';
 
 @Component({
 	selector: 'app-waterinfo-layer',
@@ -24,12 +20,12 @@ export class WaterinfoLayerComponent implements OnInit {
 	active: boolean;
 	canAdd = false;
 
-	waterinfoGroups: WaterinfoGroup[] = [];
-	waterinfoGroupSelected: WaterinfoGroup;
+	waterinfoGroups: Waterinfo.WaterinfoGroup[] = [];
+	waterinfoGroupSelected: Waterinfo.WaterinfoGroup;
 
-	quantityPar: WaterinfoParameter;
-	directionPar: WaterinfoParameter;
-	labelPar: WaterinfoParameter;
+	quantityPar: Waterinfo.WaterinfoParameter;
+	directionPar: Waterinfo.WaterinfoParameter;
+	labelPar: Waterinfo.WaterinfoParameter;
 
 	constructor(private waterinfoService: WaterinfoService, private surfsupMapLayerService: SurfsupMapLayerService) { }
 
@@ -43,9 +39,6 @@ export class WaterinfoLayerComponent implements OnInit {
 		})
 		.then(() => {
 			return this.addInitialLayerDeining();
-		})
-		.then(() => {
-			this.getCombined();
 		});
 
 	}
@@ -65,120 +58,49 @@ export class WaterinfoLayerComponent implements OnInit {
 
 	}
 
-	addLayer() {
-		//
+	handleAddLayerCommand() {
 		if(this.quantityPar && this.quantityPar.slug) {
-			this.waterinfoService.getLatestAsSurfsupMapData(
+			this.addLayer(
 				this.waterinfoGroupSelected.slug,
 				this.quantityPar.slug,
 				this.directionPar ? this.directionPar.slug : null,
 				this.labelPar ? this.labelPar.slug : this.quantityPar.slug
 			)
-			.subscribe((points) => {
-				const themeType = this.getThemeType(this.quantityPar.slug);
-				const locations = this.mapToLocations(points);
-				const layer = new SurfsupMapLayer(locations, themeType);
-				this.surfsupMapLayerService.addLayer(layer);
+			.then(() => {
 				this.reset();
 			});
 		}
 	}
 
-	private mapToLocations(points: WaterinfoPoint[]) {
-		const locations: SurfsupMapLocation[] = points.map((point) => {
-			if(point.properties.group.toLowerCase() === "wind" && this.windLocationCodesAllowed.indexOf(Number(point.properties.locationCode)) === -1) {
-				return;
-			}
-
-			const location: SurfsupMapLocation = {
-				quantityData: point.properties.data.quantity,
-				directionData: point.properties.data.direction,
-				labelData: point.properties.data.label,
-				id: point.properties.locationCode,
-				name: point.properties.name,
-				latLng: point.latLng(),
-				attribution: this.getAttribution(point)
-			}
-			return location;
-		});
-
-		return locations.filter(location => !!location);
-	}
-
-
-	private getAttribution(point: WaterinfoPoint) {
-		const parameters: string[] = [];
-		parameters.push(point.properties.data.quantity.parameter.id);
-		if(point.properties.data.direction && parameters.indexOf(point.properties.data.direction.parameter.id) < 0) parameters.push(point.properties.data.direction.parameter.id);
-		if(point.properties.data.label && parameters.indexOf(point.properties.data.label.parameter.id) < 0) parameters.push(point.properties.data.label.parameter.id);
-		
-		const waterinfoUrl  = `https://waterinfo.rws.nl/#!/details/expert/${point.properties.group}/${point.properties.locationCode}/${parameters.join(",")}`
-		const attr = {
-			url: waterinfoUrl,
-			text: "Bron en grafieken: waterinfo.rws.nl"
-			
-		}
-		return attr;
-	}
-
-	private clearParameterSelection() {
-		this.quantityPar = null;
-		this.directionPar = null;
-		this.labelPar = null;
-		this.canAdd = false;
-	}
-
-	private getThemeType(slug: string) {
-		const unit = this.getSlugUnit(slug);
-		switch (unit) {
-			case "cm":
-				return ThemeType.cm;
-			case "m/s":
-				return ThemeType["m/s"];
-			case "m___2Fs":
-				return ThemeType["m/s"];
-			case "s":
-				return ThemeType.s;
-			default:
-				return ThemeType.cm;
-		}
-	}
-
-	private getSlugUnit(slug: string) {
-		const splitted = slug.split("___20");
-		const unit = splitted ? splitted[splitted.length - 1] : "";
-		return unit;
-	}
-
-	private directionParameters() {
+	directionParameters() {
 		return this.waterinfoGroupSelected.parameters.filter(par => {
-			const unit = this.getSlugUnit(par.slug);
+			const unit = WaterinfoUtils.getUnitFromSlug(par.slug);
 			if(unit === "graad") {
 				return par;
 			}
 		});
 	}
 
-	private quantityParameters() {
+	quantityParameters() {
 		return this.waterinfoGroupSelected.parameters.filter(par => {
-			const unit = this.getSlugUnit(par.slug);
+			const unit = WaterinfoUtils.getUnitFromSlug(par.slug);
 			if(unit !== "graad") {
 				return par;
 			}
 		});
 	}
 
-	private canBeDirection(parameter: WaterinfoParameter) {
-		const unit = this.getSlugUnit(parameter.slug);
+	canBeDirection(parameter: Waterinfo.WaterinfoParameter) {
+		const unit = WaterinfoUtils.getUnitFromSlug(parameter.slug);
 		return unit === "graad";
 	}
 
-	private onWaterinfoGroupSelect(waterinfoGroupSelected: WaterinfoGroup) {
+	onWaterinfoGroupSelect(waterinfoGroupSelected: Waterinfo.WaterinfoGroup) {
 		this.clearParameterSelection();
 		this.waterinfoGroupSelected = waterinfoGroupSelected;
 	}
 
-	private handleCheckboxQuantity(parameter: WaterinfoParameter) {
+	handleCheckboxQuantity(parameter: Waterinfo.WaterinfoParameter) {
 		if(this.quantityPar === parameter) {
 			this.quantityPar = null;
 			this.canAdd = false;
@@ -189,7 +111,7 @@ export class WaterinfoLayerComponent implements OnInit {
 		}
 	}
 
-	private handleCheckboxDirection(parameter: WaterinfoParameter) {
+	handleCheckboxDirection(parameter: Waterinfo.WaterinfoParameter) {
 		if(this.directionPar === parameter) {
 			this.directionPar = null;
 		} else {
@@ -197,7 +119,7 @@ export class WaterinfoLayerComponent implements OnInit {
 		}
 	}
 
-	private handleCheckboxLabel(parameter: WaterinfoParameter) {
+	handleCheckboxLabel(parameter: Waterinfo.WaterinfoParameter) {
 		if(this.labelPar === parameter) {
 			this.labelPar = null;
 		} else {
@@ -205,7 +127,7 @@ export class WaterinfoLayerComponent implements OnInit {
 		}
 	}
 
-	private reset() {
+	reset() {
 		this.active = false;
 		this.canAdd = false;
 	
@@ -217,138 +139,95 @@ export class WaterinfoLayerComponent implements OnInit {
 	}
 
 	addInitialLayerWind() {
-		return new Promise((resolve, reject) => {
-			this.waterinfoService.getLatestAsSurfsupMapData(
+		return this.addLayer(
 				"Wind",
 				"Windsnelheid___20Lucht___20t.o.v.___20Mean___20Sea___20Level___20in___20m___2Fs",
 				"Windrichting___20Lucht___20t.o.v.___20ware___20Noorden___20in___20graad",
-				"Windsnelheid___20Lucht___20t.o.v.___20Mean___20Sea___20Level___20in___20m___2Fs"
-			)
-			.subscribe((points) => {
-				const locations = this.mapToLocations(points);
-				const layer = new SurfsupMapLayer(locations, ThemeType["m/s"], ThemeColor.orange);
-				this.surfsupMapLayerService.addLayer(layer);
-
-
-				resolve();
-			});
-		});
-
+				"Windsnelheid___20Lucht___20t.o.v.___20Mean___20Sea___20Level___20in___20m___2Fs",
+				true
+			);
 	}
 
 	addInitialLayerGolven() {
-		return new Promise((resolve, reject) => {
-			this.waterinfoService.getLatestAsSurfsupMapData(
+		return this.addLayer(
 				"Golven",
 				"Significante___20golfhoogte___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20500___20mHz___20in___20cm",
 				"Gemiddelde___20golfrichting___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20500___20mHz___20in___20graad",
-				"Significante___20golfhoogte___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20500___20mHz___20in___20cm"
-			)
-			.subscribe((points) => {
-				const locations = this.mapToLocations(points);
-				const layer = new SurfsupMapLayer(locations, ThemeType.cm, ThemeColor.purple);
-				this.surfsupMapLayerService.addLayer(layer);
-				resolve();
-			});
-		});
-
+				"Significante___20golfhoogte___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20500___20mHz___20in___20cm",
+				true
+			);
 	}
 
 	addInitialLayerDeining() {
-		return new Promise((resolve, reject) => {
-			this.waterinfoService.getLatestAsSurfsupMapData(
+		return this.addLayer(
 				"Golven",
 				"Significante___20deiningshoogte___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20100___20mHz___20in___20cm",
 				"Gem.___20richting___20deining___20tov___20ware___20noorden___20in___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20100___20mHz___20in___20graad",
-				"Significante___20deiningshoogte___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20100___20mHz___20in___20cm"
-			)
-			.subscribe((points) => {
-				const locations = this.mapToLocations(points);
-				const layer = new SurfsupMapLayer(locations, ThemeType.cm, ThemeColor.darkblue);
-				this.surfsupMapLayerService.addLayer(layer);
-				resolve();
+				"Significante___20deiningshoogte___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20100___20mHz___20in___20cm",
+				true
+			);
+	}
+
+	private getWaterinfoSurfsupMapInput(group: string, parIdQuantity: string, parIdDirection?: string, parIdLabel?: string): Promise<WaterinfoSurfsupMapInput[]> {
+		return new Promise<WaterinfoSurfsupMapInput[]>((resolve, reject) => {
+			let parameterQuantity: Waterinfo.WaterinfoParameter;
+			let parameterDirection: Waterinfo.WaterinfoParameter;
+			let parameterLabel: Waterinfo.WaterinfoParameter;
+			
+			const parIdsToFetch = [parIdQuantity, parIdDirection, parIdLabel].filter(par => !!par);
+			this.waterinfoService.getParametersCombined(parIdsToFetch).toPromise()
+			.then(parameters => {
+				if(!parameters) {
+					return;
+				}
+				const nPars = parameters.length;
+				parameterQuantity = parameters[0];
+	
+				if(parameters.length > 1 && parameters[1].slug === parIdDirection) {
+					parameterDirection = parameters[1]
+				}
+				
+				if(parameters.length > 1 && parameters[nPars - 1].slug === parIdLabel) {
+					parameterLabel = parameters[nPars - 1]
+				}
+	
+				return this.waterinfoService.getLatest(parIdsToFetch).toPromise();
+			})
+			.then(featureCollection => {
+				const inputs = WaterinfoUtils.featureCollectionToWaterinfoSurfsupMapInputs(group, featureCollection, parameterQuantity, parameterDirection, parameterLabel);
+				resolve(inputs);
+			})
+			.catch((error) => {
+				reject(error);
 			});
 		});
+		
 
 	}
 
-	getCombined() {
-		const group = "Golven";
-		const parIdQuantity = "Significante___20deiningshoogte___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20100___20mHz___20in___20cm";
-		const parIdDirection = "Gem.___20richting___20deining___20tov___20ware___20noorden___20in___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20100___20mHz___20in___20graad";
-		const parIdLabel = "Significante___20deiningshoogte___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20100___20mHz___20in___20cm";
-
-		let parameterQuantity: WaterinfoParameter;
-		let parameterDirection: WaterinfoParameter;
-		let parameterLabel: WaterinfoParameter;
-		
-		// TODO: fork?
-		this.waterinfoService.getParameterById(parIdQuantity).toPromise()
-		.then(par => {
-			parameterQuantity = par;
-			return this.waterinfoService.getParameterById(parIdDirection).toPromise();
-		})
-		.then(par => {
-			parameterDirection = par;
-			return this.waterinfoService.getParameterById(parIdLabel).toPromise();
-		})
-		.then(par => {
-			parameterLabel = par;
-			return this.waterinfoService.getLatestCombined([parIdQuantity, parIdDirection, parIdLabel]).toPromise();
-		})
-		.then(featureCollection => {
-			const dataInput: WaterinfoSurfsupMapInput[] = [];
-			const features = featureCollection.features;
-
-			features.forEach((feature) => {
-				const properties = feature.properties as WaterinfoProperties;
-				if(properties.measurements.length > 0 && properties.measurements[0].parameterId === parIdQuantity) {
-					const nMeasurements = properties.measurements.length;
-					const quantityData = {
-						measurement: properties.measurements[0],
-						parameter: parameterQuantity
-					}
-
-					// TODO check if measurement exists.
-					let directionData;
-					if(parameterDirection && properties.measurements.length > 1 && properties.measurements[1].parameterId === parIdDirection) {
-						directionData = {
-							measurement: properties.measurements[1],
-							parameter: parameterDirection
-						}
-					}
-
-					let labelData;
-					if(parameterLabel && properties.measurements.length > 1 && properties.measurements[nMeasurements - 1].parameterId === parIdLabel) {
-						labelData = {
-							measurement: properties.measurements[nMeasurements - 1],
-							parameter: parameterLabel
-						}
-					}
-
-					const input: WaterinfoSurfsupMapInput = {
-						locationCode: properties.locationCode.toString(),
-						locationName: properties.name,
-						group: group,
-						coordinates: { x: feature.geometry.coordinates[0], y: feature.geometry.coordinates[1]},
-						quantityData: quantityData,
-						directionData: directionData,
-						labelData: labelData
-					}
-
-					dataInput.push(input);
+	private addLayer(group: string, parIdQuantity: string, parIdDirection?: string, parIdLabel?: string, isPreset = false) {
+		return new Promise((resolve, reject) => {
+			this.getWaterinfoSurfsupMapInput(group, parIdQuantity, parIdDirection, parIdLabel)
+			.then(layerInputs => {
+				if(group.toLowerCase() === "wind") {
+					layerInputs = layerInputs.filter(input => this.windLocationCodesAllowed.indexOf(Number(input.locationCode)) > -1);
 				}
 
+				const layer = WaterinfoUtils.getSurfsupMapLayer(layerInputs, isPreset);
+				this.surfsupMapLayerService.addLayer(layer);
+				resolve();
+			})
+			.catch(err => {
+				reject(err);
 			});
-
-			console.log(dataInput);
-
 		});
-
 	}
 
-	private getParameterById() {
-
+	private clearParameterSelection() {
+		this.quantityPar = null;
+		this.directionPar = null;
+		this.labelPar = null;
+		this.canAdd = false;
 	}
 
 }

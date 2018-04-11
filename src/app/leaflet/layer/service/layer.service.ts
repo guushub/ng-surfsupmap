@@ -21,6 +21,11 @@ export class LayerService {
 		// Create and add layer.
 		const layerGroup = layer.createLayerGroup(layerId, paneId);
 		this.layers.push(layer);
+
+		//TODO use this for observables
+		// layerGroup.on("add", (event: L.LayerEvent) => {
+		// 	console.log(layerGroup, event);
+		// });
 				
 		this.mapService.map.addLayer(layerGroup);
 		
@@ -28,6 +33,8 @@ export class LayerService {
 		if(layer.includeInLegend) {
 			this.mapService.layerControl.addOverlay(layerGroup, layer.layerDescription);
 		}
+
+
 
 		return layerId;
 	}

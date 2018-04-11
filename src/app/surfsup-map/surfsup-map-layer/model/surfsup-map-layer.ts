@@ -141,15 +141,15 @@ interface ThemeColorSettings {
 
 const getIconSizeMs = (x: number) => { 
     const size = 30 + x * 3;
-    return size > 100 ? 100 : size;
+    return size > 75 ? 75 : size;
 }
 
 const getIconSizeCm = (x: number) => { 
     const size = 35 + Math.pow(x / 25, 2);
-    return size > 120 ? 120 : size;
+    return size > 75 ? 75 : size;
 }
 
 const getIconSizeS = (x: number) => {
     const size = 25 + Math.pow(x, 2);
-    return size > 100 ? 100 : size;
+    return size > 75 ? 75 : size;
 }
