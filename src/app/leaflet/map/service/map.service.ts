@@ -1,5 +1,6 @@
 import { Injectable, ComponentFactoryResolver, Injector, ApplicationRef, Type } from '@angular/core';
 import * as L from 'leaflet';
+import * as $ from 'jquery';
 
 
 @Injectable()
@@ -91,10 +92,30 @@ export class MapService {
                 const layerIdA = layerA.getPane().style.zIndex;
                 const layerIdB = layerB.getPane().style.zIndex;
                 return layerIdB > layerIdA;
-            }
+            },
+            collapsed: false
         }
         this.layerControl = L.control.layers(null, null, options);
         this.map.addControl(this.layerControl);
+
+        // Handle events that should do something with layer control collapse/expand.
+        this.layerControlCollapseHandler();
+        
+        this.map.on('click', () => {
+            this.layerControlCollapseHandler();
+        });
+
+        $(window).on('resize', (event) => {
+            this.layerControlCollapseHandler();
+        })
+    }
+
+    private layerControlCollapseHandler() {
+        if(window.innerWidth >= 760) {
+            this.layerControl.expand();
+        } else {
+            this.layerControl.collapse();
+        }
     }
 
     injectComponentToControl(component: Type<{}>, position: string) {
