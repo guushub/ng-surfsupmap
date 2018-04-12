@@ -72,18 +72,6 @@ export class MapService {
         return paneId;
     }
 
-    
-    // private getLayerIdByLayer(layer: L.LayerGroup) {
-    //     for (const layerId in this.layerGroups) {
-    //         if (this.layerGroups.hasOwnProperty(layerId)) {
-    //             if(this.layerGroups[layerId] === layer) {
-    //                 return Number(layerId);
-    //             }
-    //         }
-    //     }
-    //     return;
-    // }
-
     private addControls() {
         // Layer control
         const options: any = {
