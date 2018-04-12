@@ -10,6 +10,8 @@ export class MapService {
     private layerGroups: { [layerGoupId: number]: L.LayerGroup } = {};
 
     public layerControl: L.Control.Layers;
+    private layerControlCanAutoExpand = false;
+
     private zIndexBase = 600;
 
     private layers = {};
@@ -99,12 +101,28 @@ export class MapService {
     }
 
     private layerControlCollapseHandler() {
+        if(!this.layerControlCanAutoExpand) {
+            this.layerControl.collapse();
+            return;
+        }
+
         if(window.innerWidth >= 760) {
             this.layerControl.expand();
         } else {
             this.layerControl.collapse();
         }
     }
+
+    layerControlAutoExpandPause() {
+        this.layerControl.collapse();
+		this.layerControlCanAutoExpand = false;
+    }
+    
+    layerControlAutoExpandResume() {
+        this.layerControlCanAutoExpand = true;
+        this.layerControlCollapseHandler();
+	}
+
 
     injectComponentToControl(component: Type<{}>, position: string) {
         

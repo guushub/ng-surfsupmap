@@ -6,6 +6,7 @@ import { SurfsupMapLayerService } from '../../surfsup-map/surfsup-map-layer/serv
 import * as Waterinfo from '../model/waterinfo';
 import { WaterinfoSurfsupMapInput, WaterinfoUtils } from '../helper/waterinfo-utils';
 import { WaterinfoService } from '../service/waterinfo.service';
+import { MapService } from '../../leaflet/map/service/map.service';
 
 @Component({
 	selector: 'app-waterinfo-layer',
@@ -27,7 +28,9 @@ export class WaterinfoLayerComponent implements OnInit {
 	directionPar: Waterinfo.WaterinfoParameter;
 	labelPar: Waterinfo.WaterinfoParameter;
 
-	constructor(private waterinfoService: WaterinfoService, private surfsupMapLayerService: SurfsupMapLayerService) { }
+	constructor(private waterinfoService: WaterinfoService, private surfsupMapLayerService: SurfsupMapLayerService, 
+		// TODO: make global event/command service.
+		private mapService: MapService) { }
 
 	ngOnInit() {
 		this.active = false;
@@ -46,6 +49,8 @@ export class WaterinfoLayerComponent implements OnInit {
 	toggle() {
 		if(!this.active) {
 			this.active = true;
+			this.mapService.layerControlAutoExpandPause();
+			
 			this.waterinfoService.getGroups()
 			.subscribe(groups => {
 				this.waterinfoGroups = groups.filter(group => this.surfsupMapGroupsAllowed.indexOf(group.slug.toLowerCase()) > -1);
@@ -53,6 +58,7 @@ export class WaterinfoLayerComponent implements OnInit {
 			})
 		} else {
 			this.active = false;
+			
 			this.reset();
 		}
 
@@ -71,6 +77,8 @@ export class WaterinfoLayerComponent implements OnInit {
 			});
 		}
 	}
+
+
 
 	directionParameters() {
 		return this.waterinfoGroupSelected.parameters.filter(par => {
@@ -128,7 +136,9 @@ export class WaterinfoLayerComponent implements OnInit {
 	}
 
 	reset() {
+
 		this.active = false;
+		this.mapService.layerControlAutoExpandResume();
 		this.canAdd = false;
 	
 		this.waterinfoGroups = [];
