@@ -1,11 +1,13 @@
 import { TestBed, inject } from '@angular/core/testing';
 
 import { WaterinfoService } from './waterinfo.service';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 describe('WaterinfoService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [WaterinfoService]
+      imports: [HttpClientModule],
+      providers: [WaterinfoService, HttpClient]
     });
   });
 

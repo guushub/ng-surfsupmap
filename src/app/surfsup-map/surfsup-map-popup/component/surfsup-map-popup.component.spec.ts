@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SurfsupMapPopupComponent } from './surfsup-map-popup.component';
+import { WaterinfoService } from '../../../waterinfo/service/waterinfo.service';
 
 describe('SurfsupMapPopupComponent', () => {
   let component: SurfsupMapPopupComponent;
@@ -8,7 +9,8 @@ describe('SurfsupMapPopupComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SurfsupMapPopupComponent ]
+      declarations: [ SurfsupMapPopupComponent ],
+      providers: [WaterinfoService]
     })
     .compileComponents();
   }));

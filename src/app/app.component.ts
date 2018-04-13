@@ -13,9 +13,9 @@ import { WaterinfoLayerComponent } from './waterinfo/component/waterinfo-layer.c
 	styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-	title = 'app';
 
 	constructor(private mapMainService: MapService) {
+		
 	}
 
 	ngOnInit() {
