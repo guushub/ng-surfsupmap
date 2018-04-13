@@ -13,17 +13,19 @@ import { WaterinfoLayerComponent } from './waterinfo/component/waterinfo-layer/w
 	styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-
+	hideMap = false;
 	constructor(private mapService: MapService) {
 		
 	}
 
 	ngOnInit() {
 		this.mapService.onLoad.subscribe((map: L.Map) => {
-			console.log(map);
 			this.mapService.injectComponentToControl(WaterinfoLayerComponent, "topleft");
 		})
 
-		//;	
+		this.mapService.hide.subscribe((hide) => {
+			console.log(hide);
+			this.hideMap = hide;
+		  });
 	}
 }

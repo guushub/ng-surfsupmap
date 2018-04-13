@@ -8,6 +8,7 @@ export class MapService {
     public map: L.Map;
     public layerControl: L.Control.Layers;
     public onLoad: EventEmitter<L.Map>;
+    public hide: EventEmitter<boolean>;
 
     private baseMaps: L.Control.LayersObject;
     private layerGroups: { [layerGoupId: number]: L.LayerGroup } = {};
@@ -29,10 +30,10 @@ export class MapService {
         }
 
         this.onLoad = new EventEmitter<L.Map>();
+        this.hide = new EventEmitter<boolean>();
 
 
     }
-
 
     setMap(divId: string) {
         // Note that we can't set the map itself yet when constructing/initializing this service.  
@@ -47,11 +48,15 @@ export class MapService {
         })
         
         this.addControls();
+        
         this.map.on('load', () => {
             this.onLoad.emit(this.map);
         }).setView(L.latLng(54, 5), 6);
 
+        this.hide.emit(false);
+
     }
+
     private addPane(layerId: number) {
         const paneId = `pane-${layerId}`;
         const zIndex = this.zIndexBase + 5 * layerId;

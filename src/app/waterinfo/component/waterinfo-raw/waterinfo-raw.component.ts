@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MapService } from '../../../leaflet/map/service/map.service';
 
 @Component({
   selector: 'app-waterinfo-raw',
@@ -7,9 +8,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class WaterinfoRawComponent implements OnInit {
 
-  constructor() { }
+  constructor(private mapService: MapService) { }
 
   ngOnInit() {
+  }
+
+  showMap() {
+    this.mapService.hide.emit(false)
   }
 
 }
