@@ -1,4 +1,4 @@
-import { Injectable, ComponentFactoryResolver, Injector, ApplicationRef, Type } from '@angular/core';
+import { Injectable, ComponentFactoryResolver, Injector, ApplicationRef, Type, EventEmitter } from '@angular/core';
 import * as L from 'leaflet';
 import * as $ from 'jquery';
 
@@ -6,17 +6,14 @@ import * as $ from 'jquery';
 @Injectable()
 export class MapService {
     public map: L.Map;
-    public baseMaps: L.Control.LayersObject;
-    private layerGroups: { [layerGoupId: number]: L.LayerGroup } = {};
-
     public layerControl: L.Control.Layers;
+    public onLoad: EventEmitter<L.Map>;
+
+    private baseMaps: L.Control.LayersObject;
+    private layerGroups: { [layerGoupId: number]: L.LayerGroup } = {};
     private layerControlCanAutoExpand = false;
-
     private zIndexBase = 600;
-
     private layers = {};
-
-    
 
     constructor(private cfr: ComponentFactoryResolver, private injector: Injector, private appRef: ApplicationRef) {
         this.baseMaps = {
@@ -31,6 +28,7 @@ export class MapService {
             // })
         }
 
+        this.onLoad = new EventEmitter<L.Map>();
 
 
     }
@@ -41,25 +39,17 @@ export class MapService {
         // The dom is probably not ready yet, so call this from a component's 'ngOnInit()'. Something like:
         // this.mapMainService.setMap("map-main");   
 
-        const map = L.map(divId, {
+        this.map = L.map(divId, {
             zoomControl: false,
-            center: L.latLng(54, 5),
-            zoom: 6,
+            // center: L.latLng(54, 5),
             layers: [this.baseMaps.OpenStreetMap],
             attributionControl: false
-        });
-
-        L.control.zoom({ position: "topleft" }).addTo(map);
-
-        L.control.attribution({
-            position: 'bottomright'
         })
-            .addAttribution(`<a href="https://nl.linkedin.com/pub/guus-claessen/1b/8a7/608" style="text-decoration:none;">Map by Guus Claessen &nbsp;<img src="https://static.licdn.com/scds/common/u/img/webpromo/btn_in_20x15.png" width="20" height="15" alt="View Guus Claessen's LinkedIn profile" style="vertical-align:middle;" border="0"></a>`)
-            .addAttribution("<a target='_blank' href='https://waterinfo.rws.nl'>Waterinfo Rijkswaterstaat</a>")
-            .addTo(map);
-
-        this.map = map;
+        
         this.addControls();
+        this.map.on('load', () => {
+            this.onLoad.emit(this.map);
+        }).setView(L.latLng(54, 5), 6);
 
     }
     private addPane(layerId: number) {
@@ -75,6 +65,17 @@ export class MapService {
     }
 
     private addControls() {
+        // Zoom control
+        L.control.zoom({ position: "topleft" }).addTo(this.map);
+
+        // Attribution control
+        L.control.attribution({
+            position: 'bottomright'
+        })
+        .addAttribution(`<a href="https://nl.linkedin.com/pub/guus-claessen/1b/8a7/608" style="text-decoration:none;">Map by Guus Claessen &nbsp;<img src="https://static.licdn.com/scds/common/u/img/webpromo/btn_in_20x15.png" width="20" height="15" alt="View Guus Claessen's LinkedIn profile" style="vertical-align:middle;" border="0"></a>`)
+        .addAttribution("<a target='_blank' href='https://waterinfo.rws.nl'>Waterinfo Rijkswaterstaat</a>")
+        .addTo(this.map);
+
         // Layer control
         const options: any = {
             sortLayers: true,

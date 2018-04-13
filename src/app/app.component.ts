@@ -5,7 +5,7 @@ import * as L from 'leaflet';
 import { MapService } from './leaflet/map/service/map.service';
 
 // Stuff to initialize after app init
-import { WaterinfoLayerComponent } from './waterinfo/component/waterinfo-layer.component';
+import { WaterinfoLayerComponent } from './waterinfo/component/waterinfo-layer/waterinfo-layer.component';
 
 @Component({
 	selector: 'app-root',
@@ -14,12 +14,16 @@ import { WaterinfoLayerComponent } from './waterinfo/component/waterinfo-layer.c
 })
 export class AppComponent {
 
-	constructor(private mapMainService: MapService) {
+	constructor(private mapService: MapService) {
 		
 	}
 
 	ngOnInit() {
-		this.mapMainService.setMap("map-main");
-		this.mapMainService.injectComponentToControl(WaterinfoLayerComponent, "topleft");	
+		this.mapService.onLoad.subscribe((map: L.Map) => {
+			console.log(map);
+			this.mapService.injectComponentToControl(WaterinfoLayerComponent, "topleft");
+		})
+
+		//;	
 	}
 }
