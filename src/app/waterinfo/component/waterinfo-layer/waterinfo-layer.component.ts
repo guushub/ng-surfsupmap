@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import 'rxjs/add/operator/toPromise';
 
-import { SurfsupMapLayerService } from '../../surfsup-map/surfsup-map-layer/service/surfsup-map-layer.service'
+import { SurfsupMapLayerService } from '../../../surfsup-map/surfsup-map-layer/service/surfsup-map-layer.service'
 
-import * as Waterinfo from '../model/waterinfo';
-import { WaterinfoSurfsupMapInput, WaterinfoUtils } from '../helper/waterinfo-utils';
-import { WaterinfoService } from '../service/waterinfo.service';
-import { MapService } from '../../leaflet/map/service/map.service';
+import * as Waterinfo from '../../model/waterinfo';
+import { WaterinfoSurfsupMapInput, WaterinfoUtils } from '../../helper/waterinfo-utils';
+import { WaterinfoService } from '../../service/waterinfo.service';
+import { MapService } from '../../../leaflet/map/service/map.service';
 
 @Component({
 	selector: 'app-waterinfo-layer',
