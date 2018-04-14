@@ -23,7 +23,7 @@
             <br/> {{location.directionData.datetime | date: 'dd-MM-yyyy HH:mm'}}
         </div>
     </div>
-    <div *ngIf="location.labelData && location.labelData.parameter.name !== location.labelData.parameter.name" 
+    <div *ngIf="location.labelData && location.labelData.parameter.name !== location.quantityData.parameter.name" 
         class="row row-outlined">
         <div class="col-sm-8">
             {{location.labelData.parameter.name}}
