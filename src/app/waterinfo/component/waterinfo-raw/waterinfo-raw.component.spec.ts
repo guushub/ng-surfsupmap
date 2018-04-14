@@ -1,6 +1,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { WaterinfoRawComponent } from './waterinfo-raw.component';
+import { MapService } from '../../../leaflet/map/service/map.service';
+import { WaterinfoService } from '../../service/waterinfo.service';
+import { HttpClientModule } from '@angular/common/http';
 
 describe('WaterinfoRawComponent', () => {
   let component: WaterinfoRawComponent;
@@ -8,6 +11,8 @@ describe('WaterinfoRawComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports: [HttpClientModule],
+      providers: [MapService, WaterinfoService],
       declarations: [ WaterinfoRawComponent ]
     })
     .compileComponents();

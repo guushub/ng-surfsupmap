@@ -1,4 +1,28 @@
-<p>
-  waterinfo-raw works!
-</p>
-<button class="btn btn-primary btn-sm" (click)="showMap()">Show map</button> 
+
+<div *ngIf="isLoaded && isActive" class="container" >
+    <div class="row">
+        <div class="col-12">
+          <button class="btn btn-primary btn-sm" (click)="showMap()">Show map</button> 
+        </div>
+    </div>
+
+    <div *ngFor="let data of locationData">
+      <div *ngFor="let measurement of data.measurements" class="row">
+          <div class="col-3">
+            {{getLocationName(data.locationCode)}}
+          </div>
+          <div class="col-5">
+            {{getParameterName(measurement.parameterId)}}
+          </div>
+          <div class="col-2">
+            {{measurement.dateTime | date: 'dd-MM-yyyy HH:mm'}}
+          </div>
+          <div class="col-1">
+            {{measurement.latestValue}}
+          </div>
+          <div class="col-1">
+            {{measurement.unitCode}}
+          </div>
+      </div>
+    </div>
+</div>
