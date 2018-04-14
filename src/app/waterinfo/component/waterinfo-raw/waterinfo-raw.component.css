@@ -1,0 +1,15 @@
+#waterinfo-raw-scrollable {
+    overflow: auto;
+}
+
+/* mat-header-row {
+    position: sticky;
+    top: -.5px;
+    z-index: 100;
+} */
+
+.fixed{
+    position: sticky;
+    top:0;
+    z-index: 999;
+}

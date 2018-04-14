@@ -18,10 +18,18 @@ import { WaterinfoLayerComponent } from './waterinfo/component/waterinfo-layer/w
 import { WaterinfoRawComponent } from './waterinfo/component/waterinfo-raw/waterinfo-raw.component';
 import { WaterinfoRawControlComponent } from './waterinfo/component/waterinfo-raw-control/waterinfo-raw-control.component';
 
+// Tables for waterinfo
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatTableModule, MatInputModule } from "@angular/material";
+
+
 // Surfsupmap
 import { SurfsupMapLayerService } from './surfsup-map/surfsup-map-layer/service/surfsup-map-layer.service';
 import { SurfsupMapIconService } from './surfsup-map/surfsup-map-icon/service/surfsup-map-icon.service';
 import { SurfsupMapPopupComponent } from './surfsup-map/surfsup-map-popup/component/surfsup-map-popup.component';
+import { MapRegionComponent } from './regions/map-region/map-region.component';
+import { DataRegionComponent } from './regions/data-region/data-region.component';
+import { DataRegionHeaderComponent } from './regions/data-region/data-region-header/data-region-header.component';
 
 
 @NgModule({
@@ -31,12 +39,18 @@ import { SurfsupMapPopupComponent } from './surfsup-map/surfsup-map-popup/compon
         SurfsupMapPopupComponent,
         WaterinfoLayerComponent,
         WaterinfoRawComponent,
-        WaterinfoRawControlComponent
+        WaterinfoRawControlComponent,
+        MapRegionComponent,
+        DataRegionComponent,
+        DataRegionHeaderComponent
     ],
     imports: [
         BrowserModule,
         HttpModule,
-        HttpClientModule
+        HttpClientModule,
+        MatTableModule,
+        MatInputModule,
+        BrowserAnimationsModule
     ],
     providers: [
         MapService,

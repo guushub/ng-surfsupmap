@@ -1,10 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { forkJoin } from "rxjs/observable/forkJoin";
+import {DomSanitizer,SafeResourceUrl} from '@angular/platform-browser';
 
 import { MapService } from '../../../leaflet/map/service/map.service';
 import { WaterinfoGroup, WaterinfoParameter, WaterinfoProperties, WaterinfoLatestMeasurement } from '../../model/waterinfo';
 import { WaterinfoService } from '../../service/waterinfo.service';
+
+import { MatTableDataSource } from '@angular/material'
+
+interface WaterinfoMatDataSource {
+	locationName: string,
+	locationCode: number,
+	parameterName: string,
+	parameterId: string,
+	group?: string,
+	datetime: Date,
+	value: number,
+	unit: string,
+}
 
 @Component({
 	selector: 'app-waterinfo-raw',
@@ -12,24 +26,27 @@ import { WaterinfoService } from '../../service/waterinfo.service';
 	styleUrls: ['./waterinfo-raw.component.css']
 })
 export class WaterinfoRawComponent implements OnInit {
+	
 	waterinfoGroups: WaterinfoGroup[] = [];
 	surfsupMapGroupsAllowed = ["golven", "wind", "watertemperatuur"];
 	locationData: { locationCode: number, locationName: string, measurements: WaterinfoLatestMeasurement[] }[] = [];
 	isLoaded = false;
-	isActive = false;
+
+	dataSource = new MatTableDataSource<WaterinfoMatDataSource>();
+	displayedColumns = ["locationName", "parameterName", "datetime", "value", "unit"];
+	rowSelected: WaterinfoMatDataSource;
+	waterinfoUrl: SafeResourceUrl;
 
 	private allParameters: WaterinfoParameter[] = [];
 	private locations: {[locationCode: number]: string} = {};
 	
 	private leadGroupName = "golven";
 
-	constructor(private mapService: MapService, private waterinfoService: WaterinfoService) { }
+	constructor(private waterinfoService: WaterinfoService, public sanitizer:DomSanitizer) { 
+		//TODO for iframe: https://stackoverflow.com/questions/38037760/how-to-set-iframe-src-in-angular-2-without-causing-unsafe-value-exception
+	}
 
 	ngOnInit() {
-		this.mapService.hide.subscribe(hideMap => {
-			this.isActive=hideMap;
-		});
-
 		this.waterinfoService.getGroups()
 		.subscribe(groups => {
 			this.isLoaded = false;
@@ -81,6 +98,9 @@ export class WaterinfoRawComponent implements OnInit {
 					if(a.locationName > b.locationName) return 1;
 					return 0;
 				});
+
+				this.setDataSource();
+				
 				this.isLoaded = true;
 
 			});
@@ -88,10 +108,6 @@ export class WaterinfoRawComponent implements OnInit {
 		})
 
 
-	}
-
-	showMap() {
-		this.mapService.hide.emit(false)
 	}
 
 	getGroupData(group: WaterinfoGroup) {
@@ -115,6 +131,38 @@ export class WaterinfoRawComponent implements OnInit {
 
 	getLocationName(locationCode: number) {
 		return this.locations[locationCode];
+	}
+
+	setDataSource() {
+		this.locationData.forEach((location) => {
+			const dataSource: WaterinfoMatDataSource[] = location.measurements.map((measurement) => {
+				const source: WaterinfoMatDataSource = {
+					locationName: location.locationName,
+					locationCode: location.locationCode,
+					parameterId: measurement.parameterId,
+					parameterName: this.getParameterName(measurement.parameterId),
+					value: measurement.latestValue,
+					datetime: measurement.dateTime,
+					unit: measurement.unitCode
+				}
+
+				return source;
+			});
+
+			this.dataSource.data = this.dataSource.data.concat(...dataSource);
+		});
+	}
+
+	onRowClicked(row: WaterinfoMatDataSource) {
+		this.rowSelected = row;
+		//this.sanitizer.bypassSecurityTrustResourceUrl(`https://waterinfo.rws.nl/templates/embed.html#!/details/expert/Golven/${row.locationCode}/${row.parameterId}`);
+		this.waterinfoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(`https://waterinfo.rws.nl/templates/embed.html#!/details/expert/Golven/${row.locationCode}/${row.parameterId}`);
+	}
+
+	applyFilter(filterValue: string) {
+		filterValue = filterValue.trim(); // Remove whitespace
+		filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+		this.dataSource.filter = filterValue;
 	}
 
 }
