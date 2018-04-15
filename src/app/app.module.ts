@@ -20,7 +20,7 @@ import { WaterinfoRawControlComponent } from './waterinfo/component/waterinfo-ra
 
 // Tables for waterinfo
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatTableModule, MatInputModule } from "@angular/material";
+import { MatTableModule, MatInputModule, MatProgressSpinnerModule } from "@angular/material";
 
 
 // Surfsupmap
@@ -50,7 +50,8 @@ import { DataRegionHeaderComponent } from './regions/data-region/data-region-hea
         HttpClientModule,
         MatTableModule,
         MatInputModule,
-        BrowserAnimationsModule
+        BrowserAnimationsModule,
+        MatProgressSpinnerModule
     ],
     providers: [
         MapService,

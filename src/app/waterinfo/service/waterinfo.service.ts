@@ -59,6 +59,87 @@ export class WaterinfoService {
             });
     }
 
+    getLatestAsMatTableData(groupsAllowed: string[] = ["golven", "wind", "watertemperatuur"]) {
+        return this.getGroups()
+		.flatMap(groups => {
+            groupsAllowed = groupsAllowed.map(group => group.toLowerCase());
+            const groupedParameters = groups.filter(group => groupsAllowed.indexOf(group.slug.toLowerCase()) > -1).map(group => group.parameters);
+            
+            const forkJoinInputs = groupedParameters.map(parameters => this.getLatest(parameters.map(par => par.slug)));
+            
+            let allParameters: Waterinfo.WaterinfoParameter[] = [];
+            groupedParameters.forEach(parameters => {
+                allParameters = allParameters.concat(...parameters);
+            });
+
+            return Observable.forkJoin(forkJoinInputs)
+			.map(collections => {
+                const matTableData = this.groupedCollectionsToMatTableData(collections, allParameters);
+                return matTableData;
+            });
+		})
+
+    }
+
+    private groupedCollectionsToMatTableData(collections: GeoJSON.FeatureCollection<Waterinfo.WaterinfoPoint>[],
+         requestedParameters: Waterinfo.WaterinfoParameter[]) {
+        let locationData: Waterinfo.WaterinfoMatDataSource[] = [];
+        const locationDataDict: {[locationCode: number]: Waterinfo.WaterinfoMatDataSource[]} = {};
+        const parameterDict: {[slug: string]: Waterinfo.WaterinfoParameter} = {};
+
+        requestedParameters.forEach(par => {
+            parameterDict[par.slug] = par;
+        });
+
+        let i = 0;
+        collections.forEach(col => {
+            const properties = col.features.map(feature => feature.properties) as Waterinfo.WaterinfoProperties[]; 
+            properties.forEach(prop => {
+                const locationCode = prop.locationCode;
+                const locationName = prop.name;
+                let measurements = prop.measurements;
+
+                if(i === 0 && !locationDataDict[locationCode]) {
+                    locationDataDict[locationCode] = measurements.map(measurement => {
+                        return this.getWaterinfoMatDataSourceFromLatest(locationCode, locationName, parameterDict[measurement.parameterId], measurement);
+                    });
+                        
+                } else if(locationDataDict[locationCode]) {
+                    const matDataSources = measurements.map(measurement => {
+                        return this.getWaterinfoMatDataSourceFromLatest(locationCode, locationName, parameterDict[measurement.parameterId], measurement);
+                    });
+                    locationDataDict[locationCode] = locationDataDict[locationCode].concat(...matDataSources);
+                }
+            });
+            i++;
+        });
+
+        for (const key in locationDataDict) {
+            if (locationDataDict.hasOwnProperty(key)) {
+                const locationCode = Number(key);
+                const measurements = locationDataDict[locationCode]; 
+                locationData = locationData.concat(...measurements);
+            }
+        }
+
+        return locationData;
+    }
+
+
+    private getWaterinfoMatDataSourceFromLatest(locationCode: number, locationName: string, 
+        parameter: Waterinfo.WaterinfoParameter, measurement: Waterinfo.WaterinfoLatestMeasurement) {
+
+        return {
+            locationName: locationName,
+            locationCode: locationCode,
+            parameterId: parameter.slug,
+            parameterName: parameter.label,
+            value: measurement.latestValue,
+            datetime: measurement.dateTime,
+            unit: measurement.unitCode
+        }
+    }
+
     private handleError(error: Response): ErrorObservable {
         console.error(error);
         return Observable.throw(error.statusText);

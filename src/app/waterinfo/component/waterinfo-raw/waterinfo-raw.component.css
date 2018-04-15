@@ -2,6 +2,11 @@
     overflow: auto;
 }
 
+/* .waterinfo-table-raw-header {
+    position: fixed;
+    margin-top: 32px;
+} */
+
 /* mat-header-row {
     position: sticky;
     top: -.5px;
@@ -13,3 +18,39 @@
     top:0;
     z-index: 999;
 }
+
+.mat-column-value {
+    flex: 0 0 75px;
+}
+
+.mat-column-unit {
+flex: 0 0 50px;
+}
+
+.mat-column-datetime {
+    flex: 0 0 150px;
+}
+
+.mat-column-locationName {
+    flex: 0 0 200px;
+}
+
+.mat-row {
+    min-height: 25px;
+    cursor: pointer;
+}
+
+.mat-header-row {
+    min-height: 25px;
+}
+
+.mat-row:hover { background-color: aliceblue; }
+
+mat-row:nth-child(even){
+    background-color:#fafafa;
+    }
+
+mat-row:nth-child(odd){
+    background-color:white;
+    }
+

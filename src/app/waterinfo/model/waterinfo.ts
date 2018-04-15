@@ -33,3 +33,14 @@ export interface WaterinfoParameter {
     slug: string;
     synonyms: any[];
 }
+
+export interface WaterinfoMatDataSource {
+	locationName: string,
+	locationCode: number,
+	parameterName: string,
+	parameterId: string,
+	group?: string,
+	datetime: Date,
+	value: number,
+	unit: string,
+}

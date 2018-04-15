@@ -10,6 +10,9 @@ export class MapService {
     public onLoad: EventEmitter<L.Map>;
     public hide: EventEmitter<boolean>;
 
+    private latLngInit = L.latLng(54, 5);
+    private zoomLevelInit = 6;
+
     private baseMaps: L.Control.LayersObject;
     private layerGroups: { [layerGoupId: number]: L.LayerGroup } = {};
     private layerControlCanAutoExpand = false;
@@ -51,10 +54,14 @@ export class MapService {
         
         this.map.on('load', () => {
             this.onLoad.emit(this.map);
-        }).setView(L.latLng(54, 5), 6);
+        }).setView(this.latLngInit, this.zoomLevelInit);
 
         this.hide.emit(false);
 
+    }
+
+    resetView() {
+        this.map.setView(this.latLngInit, this.zoomLevelInit);
     }
 
     private addPane(layerId: number) {

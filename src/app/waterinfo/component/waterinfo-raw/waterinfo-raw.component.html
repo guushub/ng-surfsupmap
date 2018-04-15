@@ -1,56 +1,63 @@
+<div class="container-fluid">
 
-<div *ngIf="isLoaded" class="waterinfo-raw">
-    
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col" id="waterinfo-raw-scrollable">
-        <div class="waterinfo-raw-table-header">
-            <mat-form-field>
-              <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filteren...">
-            </mat-form-field>
-          </div>
+	<div class="spinner-container" *ngIf="!isLoaded">
+			<mat-spinner></mat-spinner>
+	</div>
 
-        <mat-table class="waterinfo-raw-table mat-elevation-z8" [dataSource]="dataSource">
-      
-            <ng-container matColumnDef="locationName">
-                <mat-header-cell *matHeaderCellDef>Locatie naam</mat-header-cell>
-                <mat-cell class="description-cell"
-                      *matCellDef="let entry">{{entry.locationName}}</mat-cell>
-            </ng-container>
+	<div *ngIf="isLoaded" class="waterinfo-raw">
+		
 
-            <ng-container matColumnDef="parameterName">
-                <mat-header-cell *matHeaderCellDef>Parameter</mat-header-cell>
-                <mat-cell class="description-cell"
-                      *matCellDef="let entry">{{entry.parameterName}}</mat-cell>
-            </ng-container>
+		<div class="row">
+			<div class="col" id="waterinfo-raw-scrollable">
 
-            <ng-container matColumnDef="datetime">
-                <mat-header-cell *matHeaderCellDef>Tijd</mat-header-cell>
-                <mat-cell class="description-cell"
-                      *matCellDef="let entry">{{entry.datetime | date: 'dd-MM-yyyy HH:mm'}}</mat-cell>
-            </ng-container>
 
-            <ng-container matColumnDef="value">
-                <mat-header-cell *matHeaderCellDef>Meetwaarde</mat-header-cell>
-                <mat-cell class="description-cell"
-                      *matCellDef="let entry">{{entry.value}}</mat-cell>
-            </ng-container>
+				<div class="waterinfo-raw-table-header">
+						<mat-form-field>
+							<input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filteren...">
+						</mat-form-field>
+					</div>
 
-            <ng-container matColumnDef="unit">
-                <mat-header-cell *matHeaderCellDef>Eenheid</mat-header-cell>
-                <mat-cell class="description-cell"
-                      *matCellDef="let entry">{{entry.unit}}</mat-cell>
-            </ng-container>
-            
-            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-            
-            <mat-row *matRowDef="let row; columns: displayedColumns" (click)="onRowClicked(row)"></mat-row>
-            
-        </mat-table>
-      </div>
-      <div class="col" *ngIf="rowSelected" >
-          <iframe class="fixed" width="100%" height="625" [src]="waterinfoUrl" frameborder="0"></iframe><script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/3.5.5/iframeResizer.min.js"></script><script>iFrameResize();</script>
-      </div>
-    </div>
-  </div>
+				<mat-table class="waterinfo-raw-table mat-elevation-z8 table-hover" [dataSource]="dataSource" matSort>
+			
+						<ng-container matColumnDef="locationName">
+								<mat-header-cell *matHeaderCellDef>Locatie naam</mat-header-cell>
+								<mat-cell class="description-cell"
+											*matCellDef="let entry">{{entry.locationName}}</mat-cell>
+						</ng-container>
+
+						<ng-container matColumnDef="parameterName">
+								<mat-header-cell *matHeaderCellDef>Parameter</mat-header-cell>
+								<mat-cell class="description-cell"
+											*matCellDef="let entry">{{entry.parameterName}}</mat-cell>
+						</ng-container>
+
+						<ng-container matColumnDef="datetime">
+								<mat-header-cell *matHeaderCellDef>Tijd</mat-header-cell>
+								<mat-cell class="description-cell"
+											*matCellDef="let entry">{{entry.datetime | date: 'dd-MM-yyyy HH:mm'}}</mat-cell>
+						</ng-container>
+
+						<ng-container matColumnDef="value">
+								<mat-header-cell *matHeaderCellDef>Meetwaarde</mat-header-cell>
+								<mat-cell class="value-cell"
+											*matCellDef="let entry">{{entry.value}}</mat-cell>
+						</ng-container>
+
+						<ng-container matColumnDef="unit">
+								<mat-header-cell *matHeaderCellDef>Eenheid</mat-header-cell>
+								<mat-cell class="description-cell"
+											*matCellDef="let entry">{{entry.unit}}</mat-cell>
+						</ng-container>
+						
+						<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+						
+						<mat-row *matRowDef="let row; columns: displayedColumns" (click)="onRowClicked(row)"></mat-row>
+						
+				</mat-table>
+			</div>
+			<!-- <div class="col" *ngIf="rowSelected" >
+					<iframe class="fixed" width="100%" height="625" [src]="waterinfoUrl" frameborder="0"></iframe><script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/3.5.5/iframeResizer.min.js"></script><script>iFrameResize();</script>
+			</div> -->
+		</div>
+	</div>
 </div>
