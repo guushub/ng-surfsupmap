@@ -4,6 +4,7 @@ import { WaterinfoRawComponent } from './waterinfo-raw.component';
 import { MapService } from '../../../leaflet/map/service/map.service';
 import { WaterinfoService } from '../../service/waterinfo.service';
 import { HttpClientModule } from '@angular/common/http';
+import { MatTableModule, MatInputModule, MatProgressSpinnerModule } from "@angular/material";
 
 describe('WaterinfoRawComponent', () => {
   let component: WaterinfoRawComponent;
@@ -11,7 +12,7 @@ describe('WaterinfoRawComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientModule],
+      imports: [HttpClientModule, MatTableModule, MatInputModule, MatProgressSpinnerModule],
       providers: [MapService, WaterinfoService],
       declarations: [ WaterinfoRawComponent ]
     })

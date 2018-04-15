@@ -9,13 +9,16 @@ import { MapRegionComponent } from './regions/map-region/map-region.component';
 import { DataRegionComponent } from './regions/data-region/data-region.component';
 import { MapComponent } from './leaflet/map/component/map/map.component';
 import { WaterinfoRawComponent } from './waterinfo/component/waterinfo-raw/waterinfo-raw.component';
+import { DataRegionHeaderComponent } from './regions/data-region/data-region-header/data-region-header.component';
+import { MatProgressSpinnerModule, MatTableModule, MatInputModule } from '@angular/material';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientModule],
+      imports: [HttpClientModule, MatProgressSpinnerModule, MatTableModule, MatInputModule],
       declarations: [
-        AppComponent, MapRegionComponent, DataRegionComponent, MapComponent, WaterinfoRawComponent
+        AppComponent, MapRegionComponent, DataRegionComponent, 
+        MapComponent, WaterinfoRawComponent, DataRegionHeaderComponent
       ],
       providers: [MapService, WaterinfoService]
     }).compileComponents();
