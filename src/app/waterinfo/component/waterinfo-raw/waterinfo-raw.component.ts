@@ -46,12 +46,9 @@ export class WaterinfoRawComponent implements OnInit {
 			});
 			
 			this.isLoaded = true;
-		})
+		});
 	}
-
-	ngAfterViewInit() {
-	}
-
+	
 	getGroupData(group: WaterinfoGroup) {
 		if(!group) {
 			return;

@@ -13,11 +13,6 @@
     z-index: 100;
 } */
 
-.fixed{
-    position: sticky;
-    top:0;
-    z-index: 999;
-}
 
 .mat-column-value {
     flex: 0 0 75px;
@@ -53,4 +48,8 @@ mat-row:nth-child(even){
 mat-row:nth-child(odd){
     background-color:white;
     }
+
+.mat-cell {
+    font-size: 12px;
+}
 
