@@ -8,6 +8,8 @@ import { MapService } from './leaflet/map/service/map.service';
 import { WaterinfoLayerComponent } from './waterinfo/component/waterinfo-layer/waterinfo-layer.component';
 import { WaterinfoRawControlComponent } from './waterinfo/component/waterinfo-raw-control/waterinfo-raw-control.component';
 
+
+
 @Component({
 	selector: 'app-root',
 	templateUrl: './app.component.html',
@@ -20,6 +22,7 @@ export class AppComponent {
 	}
 
 	ngOnInit() {
+		
 		this.mapService.onLoad.subscribe((map: L.Map) => {
 			this.mapService.injectComponentToControl(WaterinfoLayerComponent, "topleft");
 			this.mapService.injectComponentToControl(WaterinfoRawControlComponent, "topleft");

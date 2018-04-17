@@ -7,6 +7,7 @@ import { WaterinfoGroup, WaterinfoParameter, WaterinfoProperties, WaterinfoLates
 import { WaterinfoService } from '../../service/waterinfo.service';
 
 import { MatTableDataSource, MatProgressSpinner } from '@angular/material'
+import { DataRegionDirective } from '../../../regions/data-region/directive/data-region.directive';
 
 
 
@@ -22,6 +23,8 @@ export class WaterinfoRawComponent implements OnInit {
 	displayedColumns = ["locationName", "parameterName", "datetime", "value", "unit"];
 	rowSelected: WaterinfoMatDataSource;
 	waterinfoUrl: string;
+
+	@ViewChild(DataRegionDirective) adHost: DataRegionDirective;
 
 	private allParameters: WaterinfoParameter[] = [];
 	private locations: {[locationCode: number]: string} = {};
@@ -47,6 +50,7 @@ export class WaterinfoRawComponent implements OnInit {
 			
 			this.isLoaded = true;
 		});
+		
 	}
 	
 	getGroupData(group: WaterinfoGroup) {
