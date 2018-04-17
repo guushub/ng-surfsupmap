@@ -1,15 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import { RegionComponent } from '../region/region.component';
+import { RegionDirective } from '../region/region.directive';
+import { RegionName } from '../model/region-name';
+import { MapRegionDirective } from './directive/map-region.directive';
 
 @Component({
   selector: 'app-map-region',
   templateUrl: './map-region.component.html',
   styleUrls: ['./map-region.component.css']
 })
-export class MapRegionComponent implements OnInit {
+export class MapRegionComponent extends RegionComponent<RegionDirective> {
+  name = RegionName.MapRegion;
 
-  constructor() { }
-
-  ngOnInit() {
-  }
+  @ViewChild(MapRegionDirective)
+  body: MapRegionDirective;
 
 }

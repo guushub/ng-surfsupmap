@@ -1,51 +1,63 @@
 import { Injectable, Type } from '@angular/core';
 import { Observable } from "rxjs/Observable";
+import { BehaviorSubject } from 'rxjs';
+import { RegionName } from './model/region-name';
 
-
-enum Region {
-  DataRegion,
-  MapRegion
+interface ComponentInfo {
+	componentId: string;
+	component: Type<{}>;
+	region: RegionName;
 }
 
 @Injectable()
 export class RegionControlService {
-  private componentsAdded: {[componentId: string] : {
-      region: Region,
-      component: Type<{}>
-    }
-  }
 
-  constructor() { 
-    this.componentsAdded = {};
-  }
+	private componentSubject: BehaviorSubject<ComponentInfo>;
+	componentSender$: Observable<ComponentInfo>;
 
-  addComponentToRegion(componentId: string, region: Region, component: Type<{}>) {
-    const componentInfo = {componentId: componentId, component: component};
-    return Observable.of(componentInfo);
-  }
+	// To find the component.
+	private componentsAdded: ComponentInfo[];
+	
 
-  activateComponent(componentId: string, showRegion: boolean) {
-    const region = this.componentsAdded[componentId].region;
-    if(showRegion) {
-      this.showRegion(region);
-    }
-  }
+	constructor() { 
+		this.componentSubject = new BehaviorSubject<ComponentInfo>(null);
+		this.componentSender$ = this.componentSubject.asObservable();
+		this.componentsAdded = [];
 
-  deactivateComponent(componentId: string, hideRegion: boolean) {
-    const region = this.componentsAdded[componentId].region;
-    if(hideRegion) {
-      this.hideRegion(region);
-    }
-    //more
+		this.componentSender$.subscribe(componentInfo => {
+			//TODO maybe need confirmation from receiving region.
+			this.componentsAdded.push(componentInfo);
+		})
+	}
 
-  }
+	addComponentToRegion(componentId: string, region: RegionName, component: Type<{}>) {
+		const componentInfo = {componentId: componentId, component: component, region: region};
+		console.log(componentInfo);
+		this.componentSubject.next(componentInfo);
+	}
 
-  showRegion(region: Region) {
+	activateComponent(componentId: string, showRegion: boolean) {
+		const region = this.componentsAdded[componentId].region;
+		if(showRegion) {
+			this.showRegion(region);
+		}
+	}
 
-  }
+	deactivateComponent(componentId: string, hideRegion: boolean) {
+		const region = this.componentsAdded[componentId].region;
+		if(hideRegion) {
+			this.hideRegion(region);
+		}
+		//more
 
-  hideRegion(region: Region) {
+	}
 
-  }
+	showRegion(region: RegionName) {
+
+	}
+
+	hideRegion(region: RegionName) {
+
+	}
 
 }
