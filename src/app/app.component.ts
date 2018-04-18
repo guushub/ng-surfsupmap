@@ -11,8 +11,7 @@ import { RegionControlService } from './regions/region-control.service';
 import { RegionName } from './regions/model/region-name';
 import { WaterinfoRawComponent } from './waterinfo/component/waterinfo-raw/waterinfo-raw.component';
 import { DummyComponent } from './dummy/dummy.component';
-
-
+import { MapComponent } from './leaflet/map/component/map/map.component';
 
 @Component({
 	selector: 'app-root',
@@ -34,9 +33,8 @@ export class AppComponent {
 			
 		});
 
-		this.regionControlService.addComponentToRegion("DummyComponent", RegionName.MapRegion, DummyComponent);
+		this.regionControlService.addComponentToRegion("MapComponent", RegionName.MapRegion, MapComponent, true);
 		this.regionControlService.addComponentToRegion("WaterinfoRawComponent", RegionName.DataRegion, WaterinfoRawComponent);
-	
 
 		this.mapService.hide.subscribe((hide) => {
 			this.hideMap = hide;

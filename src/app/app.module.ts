@@ -72,6 +72,7 @@ import { MapRegionDirective } from './regions/map-region/directive/map-region.di
         RegionControlService
     ],
     entryComponents: [
+        MapComponent,
         SurfsupMapPopupComponent,
         WaterinfoLayerComponent,
         WaterinfoRawControlComponent,

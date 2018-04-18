@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MapService } from '../../../leaflet/map/service/map.service';
+import { RegionControlService } from '../../../regions/region-control.service';
 //TODO for refactor: Maybe use directive.
 
 @Component({
@@ -9,7 +10,7 @@ import { MapService } from '../../../leaflet/map/service/map.service';
 })
 export class WaterinfoRawControlComponent implements OnInit {
 
-	constructor(private mapService: MapService) { }
+	constructor(private mapService: MapService, private regionControlService: RegionControlService) { }
 
 	ngOnInit() {
 		
@@ -17,6 +18,8 @@ export class WaterinfoRawControlComponent implements OnInit {
 
 	showWaterinfoRaw() {
 		// Hide the map.
-		this.mapService.hide.emit(true);
+		//this.mapService.hide.emit(true);
+		this.regionControlService.activateComponent("WaterinfoRawComponent");
+
 	}
 }

@@ -15,7 +15,7 @@ import { RegionDirective } from './region.directive';
 export abstract class RegionComponent<T extends RegionDirective> implements OnInit, OnDestroy {
 	// export class RegionComponent<T extends RegionDirective> implements OnInit, OnDestroy {
 	abstract name: RegionName;
-	isActive: boolean;
+	isActive: boolean = true;
 	components: {[componentId: string]: Type<{}> }
 	private componentSubscription: Subscription;
 
@@ -26,14 +26,18 @@ export abstract class RegionComponent<T extends RegionDirective> implements OnIn
 	}
 
 	ngOnInit() {
-		this.componentSubscription = this.regionControlService.componentSender$
-			 .subscribe(componentInfo => {
-				if(componentInfo.region === this.name) {
-					console.log(this.name, componentInfo)
-					
-					 this.addBodyComponent(componentInfo.componentId, componentInfo.component);
-					 this.loadBodyComponent(componentInfo.componentId);
+		this.componentSubscription = this.regionControlService.regionComponents$
+			 .subscribe(regionComponents => {
+				const regionComponent = regionComponents.find(regionComponent => regionComponent.region === this.name);
+				if(regionComponent) {
+					this.isActive = regionComponent.isActive;
+					this.addBodyComponent(regionComponent.componentId, regionComponent.component);
 				}
+
+				if(this.isActive) {
+					this.loadBodyComponent(regionComponent.componentId);
+				}
+				
 			 });
 	}
 	
