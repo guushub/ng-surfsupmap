@@ -224,7 +224,9 @@ export class WaterinfoLayerComponent implements OnInit {
 				}
 
 				const layer = WaterinfoUtils.getSurfsupMapLayer(layerInputs, isPreset);
-				this.surfsupMapLayerService.addLayer(layer);
+				if(layer) {
+					this.surfsupMapLayerService.addLayer(layer);
+				}
 				resolve();
 			})
 			.catch(err => {

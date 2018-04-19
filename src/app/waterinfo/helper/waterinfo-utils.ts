@@ -126,6 +126,9 @@ export class WaterinfoUtils {
     }
 
     public static getSurfsupMapLayer(inputs: WaterinfoSurfsupMapInput[], isPreset: boolean) {
+		if(!inputs || inputs.length <= 0) {
+			return null;
+		}
 		const quantitySlug = inputs[0].quantityData.parameter.slug;
 
 		const themeType = this.getThemeTypeFromSlug(quantitySlug);
