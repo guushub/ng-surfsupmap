@@ -28,12 +28,16 @@ export class LayerService {
 		// layerGroup.on("add", (event: L.LayerEvent) => {
 		// 	console.log(layerGroup, event);
 		// });
-				
 		this.mapService.map.addLayer(layerGroup);
-		
+
 		// Add it to layercontrol if it has a description
 		if(layer.includeInLegend) {
 			this.mapService.layerControl.addOverlay(layerGroup, layer.layerDescription);
+		}
+
+				
+		if(!layer.activateOnLoad) {
+			this.mapService.map.removeLayer(layerGroup);
 		}
 
 		this.leafletLayers[layerId] = layerGroup;

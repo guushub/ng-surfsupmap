@@ -4,7 +4,8 @@ export class Layer {
     private id: number;
     private layerGroup: L.LayerGroup;
 
-    constructor(public markers: L.Marker[], public layerDescription: string, public includeInLegend: boolean) {
+
+    constructor(public markers: L.Marker[], public layerDescription: string, public includeInLegend: boolean, public activateOnLoad = true) {
 
     }
 
