@@ -28,7 +28,9 @@ export class LayerService {
 		// layerGroup.on("add", (event: L.LayerEvent) => {
 		// 	console.log(layerGroup, event);
 		// });
-		this.mapService.map.addLayer(layerGroup);
+
+		this.mapService.addLayer(layerGroup);
+		//this.mapService.map.addLayer(layerGroup);
 
 		// Add it to layercontrol if it has a description
 		if(layer.includeInLegend) {
