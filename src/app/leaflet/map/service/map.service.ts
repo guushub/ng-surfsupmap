@@ -14,10 +14,10 @@ export class MapService {
     private zoomLevelInit = 6;
 
     private baseMaps: L.Control.LayersObject;
-    private layerGroups: { [layerGoupId: number]: L.LayerGroup } = {};
+    private layerOrder: L.Layer[] = [];
+
     private layerControlCanAutoExpand = false;
     private zIndexBase = 600;
-    private layers = {};
 
     constructor(private cfr: ComponentFactoryResolver, private injector: Injector, private appRef: ApplicationRef) {
         this.baseMaps = {
@@ -92,9 +92,16 @@ export class MapService {
         const options: any = {
             sortLayers: true,
             sortFunction: (layerA: L.LayerGroup, layerB: L.LayerGroup) => {
-                const layerIdA = layerA.getPane().style.zIndex;
-                const layerIdB = layerB.getPane().style.zIndex;
-                return layerIdB > layerIdA;
+                // if(!this.map.hasLayer(layerA) && !this.map.hasLayer(layerB)) return 0;
+                // if(!this.map.hasLayer(layerA)) return 1;
+                // if(!this.map.hasLayer(layerB)) return -1;
+
+                // const layerIdA = layerA.getPane().style.zIndex;
+                // const layerIdB = layerB.getPane().style.zIndex;
+                // return layerIdB > layerIdA;
+                const orderLayerA = this.layerOrder.indexOf(layerA);
+                const orderLayerB = this.layerOrder.indexOf(layerB);
+                return orderLayerB > orderLayerA;
             },
             collapsed: false
         }
@@ -107,6 +114,12 @@ export class MapService {
         this.map.on('click', () => {
             this.layerControlCollapseHandler();
         });
+
+        // this.map.on('layeradd', (event: L.LayerEvent) => {
+        //     const layer = event.layer as L.Marker;
+        //     if(layer && layer.options) {
+        //     }
+        // });
 
         $(window).on('resize', (event) => {
             this.layerControlCollapseHandler();
@@ -168,16 +181,27 @@ export class MapService {
 
     }
 
-    // private loadComponent(container, component: Type<{}>) {
-    //     const compFactory = this.cfr.resolveComponentFactory(component);
-    //     const componentRef = compFactory.create(this.injector);
-    //     this.appRef.attachView(componentRef.hostView);
-    //     componentRef.onDestroy(() => {
-    //         this.appRef.detachView(componentRef.hostView);
-    //     });
+    addLayer(layer: L.Layer) {
+        this.map.addLayer(layer);
+        this.setLayerOrder(layer);
+        
+    }
 
-    //     const html = componentRef.location.nativeElement;
-    //     container.appendChild(html);
-    // }
+    setLayerOrder(layer: L.Layer, layerIndexNew?: number) {
+        if(this.layerOrder.indexOf(layer) < 0) {
+            // If layer is not in order list yet, and no layerIndexNew given, place
+            // it on top
+            this.layerOrder.push(layer);
+            return;
+        }
+
+        const layerIndexCurrent = this.layerOrder.indexOf(layer);
+        if((!layerIndexNew && layerIndexNew !== 0) || layerIndexNew >= this.layerOrder.length) {
+            layerIndexNew = this.layerOrder.length - 1;
+        }
+
+        this.layerOrder.splice(layerIndexNew, 0, this.layerOrder.splice(layerIndexCurrent, 1)[0]);
+     
+    }
     
 }

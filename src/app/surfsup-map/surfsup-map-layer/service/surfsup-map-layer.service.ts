@@ -20,7 +20,7 @@ export class SurfsupMapLayerService {
 	constructor(private popupService: PopupService, 
 		private layerService: LayerService, private iconService: SurfsupMapIconService) { }
 	
-	addLayer(surfsupMapLayer: SurfsupMapLayer) {
+	addLayer(surfsupMapLayer: SurfsupMapLayer, activateOnLoad = true) {
 		
 		const markers: L.Marker[] = [];
 		surfsupMapLayer.locations.forEach(location => {
@@ -35,8 +35,18 @@ export class SurfsupMapLayerService {
 
 		const legendIcon = this.iconService.getLegendIcon(surfsupMapLayer.iconProperties);
 		const layerDescription = this.getLayerDescription(surfsupMapLayer.legendText, legendIcon);
-		const layer = new Layer(markers, layerDescription, true);
-		this.layerService.add(layer);
+		const layer = new Layer(markers, layerDescription, true, activateOnLoad);
+		surfsupMapLayer.layerId = this.layerService.add(layer);
+	}
+
+	removeLayer(surfsupMapLayer: SurfsupMapLayer) {
+		const layerId = surfsupMapLayer.layerId;
+		if(!(layerId >= 0)) {
+			//TODO warning
+			return;
+		}
+
+		this.layerService.remove(layerId);
 	}
 
 	private bindPopup(marker: L.Marker, location: SurfsupMapLocation) {
