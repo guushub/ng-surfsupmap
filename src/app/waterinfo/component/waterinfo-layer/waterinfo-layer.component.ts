@@ -7,6 +7,7 @@ import * as Waterinfo from '../../model/waterinfo';
 import { WaterinfoSurfsupMapInput, WaterinfoUtils } from '../../helper/waterinfo-utils';
 import { WaterinfoService } from '../../service/waterinfo.service';
 import { MapService } from '../../../leaflet/map/service/map.service';
+import { SurfsupMapLayer } from '../../../surfsup-map/surfsup-map-layer/model/surfsup-map-layer';
 
 @Component({
 	selector: 'app-waterinfo-layer',
@@ -16,9 +17,9 @@ import { MapService } from '../../../leaflet/map/service/map.service';
 export class WaterinfoLayerComponent implements OnInit {
 
     private windLocationCodesAllowed = [4529, 4755, 2173, 4807, 1310, 4127, 2719, 4586, 3283, 2721, 2175, 1073, 1617, 1092, 1075, 3905, 4953, 4455, 4864, 4865, 516];
-	private surfsupMapGroupsAllowed = ["golven", "wind", "watertemperatuur"];
+	private surfsupMapGroupsAllowed = ["golven", "wind", "watertemperatuur", "lucht"];
 
-	private layersAdded = [];
+	private layersAdded: SurfsupMapLayer[] = [];
 
 	active: boolean;
 	canAdd = false;
@@ -41,7 +42,7 @@ export class WaterinfoLayerComponent implements OnInit {
 		this.intializeLayers()
 		.then(() => {
 			//TODO: fix workaround
-			if(this.layersAdded.length <= 0) {
+			if(this.layersAdded.length <= 2) {
 				// retry
 				return this.intializeLayers();
 			} 
@@ -52,7 +53,15 @@ export class WaterinfoLayerComponent implements OnInit {
 
 	}
 
+
+
 	intializeLayers() {
+		if(this.layersAdded) {
+			this.layersAdded.forEach((lyr) => {
+				this.removeAddedLayer(lyr);
+			});
+		}
+
 		// Make sure wave heights is top layer.
 		return this.addInitialLayerGolven()
 				.then(() => {
@@ -63,6 +72,10 @@ export class WaterinfoLayerComponent implements OnInit {
 				});
 	}
 	
+	removeAddedLayer(layer: SurfsupMapLayer) {
+		this.surfsupMapLayerService.removeLayer(layer);
+	}
+
 	toggle() {
 		if(!this.active) {
 			this.active = true;
@@ -94,8 +107,6 @@ export class WaterinfoLayerComponent implements OnInit {
 			});
 		}
 	}
-
-
 
 	directionParameters() {
 		return this.waterinfoGroupSelected.parameters.filter(par => {
@@ -191,7 +202,8 @@ export class WaterinfoLayerComponent implements OnInit {
 				"Significante___20deiningshoogte___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20100___20mHz___20in___20cm",
 				"Gem.___20richting___20deining___20tov___20ware___20noorden___20in___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20100___20mHz___20in___20graad",
 				"Significante___20deiningshoogte___20in___20het___20spectrale___20domein___20Oppervlaktewater___20golffrequentie___20tussen___2030___20en___20100___20mHz___20in___20cm",
-				true
+				true,
+				false
 			);
 	}
 
@@ -232,7 +244,7 @@ export class WaterinfoLayerComponent implements OnInit {
 
 	}
 
-	private addLayer(group: string, parIdQuantity: string, parIdDirection?: string, parIdLabel?: string, isPreset = false) {
+	private addLayer(group: string, parIdQuantity: string, parIdDirection?: string, parIdLabel?: string, isPreset = false, activateOnLoad = true) {
 		return new Promise((resolve, reject) => {
 			this.getWaterinfoSurfsupMapInput(group, parIdQuantity, parIdDirection, parIdLabel)
 			.then(layerInputs => {
@@ -242,7 +254,7 @@ export class WaterinfoLayerComponent implements OnInit {
 
 				const layer = WaterinfoUtils.getSurfsupMapLayer(layerInputs, isPreset);
 				if(layer) {
-					this.surfsupMapLayerService.addLayer(layer);
+					this.surfsupMapLayerService.addLayer(layer, activateOnLoad);
 					//TODO: fix workaround
 					this.layersAdded.push(layer);
 				}
