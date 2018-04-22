@@ -10,7 +10,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "build:staging": "ng build --prod --base-href /surfsupmap-test/",
-    "build:production": "ng build --prod --base-href /surfsupmap/"
+    "build:live": "ng build --prod --base-href /surfsupmap/"
   },
   "private": true,
   "dependencies": {
