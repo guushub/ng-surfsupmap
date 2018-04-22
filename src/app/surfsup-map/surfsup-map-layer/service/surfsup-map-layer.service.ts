@@ -36,7 +36,17 @@ export class SurfsupMapLayerService {
 		const legendIcon = this.iconService.getLegendIcon(surfsupMapLayer.iconProperties);
 		const layerDescription = this.getLayerDescription(surfsupMapLayer.legendText, legendIcon);
 		const layer = new Layer(markers, layerDescription, true);
-		this.layerService.add(layer);
+		surfsupMapLayer.layerId = this.layerService.add(layer);
+	}
+
+	removeLayer(surfsupMapLayer: SurfsupMapLayer) {
+		const layerId = surfsupMapLayer.layerId;
+		if(!(layerId >= 0)) {
+			//TODO warning
+			return;
+		}
+
+		this.layerService.remove(layerId);
 	}
 
 	private bindPopup(marker: L.Marker, location: SurfsupMapLocation) {

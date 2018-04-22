@@ -16,7 +16,7 @@ export interface SurfsupMapLocation {
 }
 
 export class SurfsupMapLayer {
-
+	layerId?: number;
     iconProperties: SurfsupMapIconProperties;
     legendText: string;
 

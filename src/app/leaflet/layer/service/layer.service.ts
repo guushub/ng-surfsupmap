@@ -8,7 +8,9 @@ import { Layer } from '../model/layer';
 export class LayerService {
 
 	private layers: Layer[] = [];
-    private zIndexBase = 600;
+	private zIndexBase = 600;
+	
+	private leafletLayers: {[layerId: number]: L.Layer} = {};
 
 	constructor(private mapService: MapService) { }
 
@@ -34,9 +36,27 @@ export class LayerService {
 			this.mapService.layerControl.addOverlay(layerGroup, layer.layerDescription);
 		}
 
-
-
+		this.leafletLayers[layerId] = layerGroup;
 		return layerId;
+	}
+
+	remove(layerId: number) {
+		if(!this.leafletLayers || !this.leafletLayers[layerId]) {
+			return;
+		}
+		const layerToRemove = this.leafletLayers[layerId];
+		this.mapService.map.removeLayer(layerToRemove);
+		this.removeLayerFromLegend(layerId);
+		
+		this.leafletLayers[layerId] = null;
+	}
+
+	removeLayerFromLegend(layerId: number) {
+		if(!this.leafletLayers || !this.leafletLayers[layerId]) {
+			return;
+		}
+		const layerToRemove = this.leafletLayers[layerId];
+		this.mapService.layerControl.removeLayer(layerToRemove);
 	}
 
 	private getNewLayerGroupId() {
