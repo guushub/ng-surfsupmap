@@ -126,7 +126,7 @@ export class WaterinfoService {
     }
 
 
-    private getWaterinfoMatDataSourceFromLatest(locationCode: number, locationName: string, 
+    private getWaterinfoMatDataSourceFromLatest(locationCode: string, locationName: string, 
         parameter: Waterinfo.WaterinfoParameter, measurement: Waterinfo.WaterinfoLatestMeasurement) {
 
         return {
