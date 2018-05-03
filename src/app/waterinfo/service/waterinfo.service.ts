@@ -84,7 +84,7 @@ export class WaterinfoService {
     private groupedCollectionsToMatTableData(collections: GeoJSON.FeatureCollection<Waterinfo.WaterinfoPoint>[],
          requestedParameters: Waterinfo.WaterinfoParameter[]) {
         let locationData: Waterinfo.WaterinfoMatDataSource[] = [];
-        const locationDataDict: {[locationCode: number]: Waterinfo.WaterinfoMatDataSource[]} = {};
+        const locationDataDict: {[locationCode: string]: Waterinfo.WaterinfoMatDataSource[]} = {};
         const parameterDict: {[slug: string]: Waterinfo.WaterinfoParameter} = {};
 
         requestedParameters.forEach(par => {
