@@ -8,7 +8,7 @@ export interface WaterinfoLatestMeasurement {
 export interface WaterinfoProperties {
     name: string;
     measurements: WaterinfoLatestMeasurement[];
-    locationCode: number;
+    locationCode: string;
     featured: boolean;
 }
 
@@ -36,7 +36,7 @@ export interface WaterinfoParameter {
 
 export interface WaterinfoMatDataSource {
 	locationName: string,
-	locationCode: number,
+	locationCode: string,
 	parameterName: string,
 	parameterId: string,
 	group?: string,

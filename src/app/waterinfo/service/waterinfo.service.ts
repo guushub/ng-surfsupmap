@@ -84,7 +84,7 @@ export class WaterinfoService {
     private groupedCollectionsToMatTableData(collections: GeoJSON.FeatureCollection<Waterinfo.WaterinfoPoint>[],
          requestedParameters: Waterinfo.WaterinfoParameter[]) {
         let locationData: Waterinfo.WaterinfoMatDataSource[] = [];
-        const locationDataDict: {[locationCode: number]: Waterinfo.WaterinfoMatDataSource[]} = {};
+        const locationDataDict: {[locationCode: string]: Waterinfo.WaterinfoMatDataSource[]} = {};
         const parameterDict: {[slug: string]: Waterinfo.WaterinfoParameter} = {};
 
         requestedParameters.forEach(par => {
@@ -116,7 +116,7 @@ export class WaterinfoService {
 
         for (const key in locationDataDict) {
             if (locationDataDict.hasOwnProperty(key)) {
-                const locationCode = Number(key);
+                const locationCode = key;
                 const measurements = locationDataDict[locationCode]; 
                 locationData = locationData.concat(...measurements);
             }
@@ -126,7 +126,7 @@ export class WaterinfoService {
     }
 
 
-    private getWaterinfoMatDataSourceFromLatest(locationCode: number, locationName: string, 
+    private getWaterinfoMatDataSourceFromLatest(locationCode: string, locationName: string, 
         parameter: Waterinfo.WaterinfoParameter, measurement: Waterinfo.WaterinfoLatestMeasurement) {
 
         return {
