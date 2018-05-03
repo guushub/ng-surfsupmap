@@ -116,7 +116,7 @@ export class WaterinfoService {
 
         for (const key in locationDataDict) {
             if (locationDataDict.hasOwnProperty(key)) {
-                const locationCode = Number(key);
+                const locationCode = key;
                 const measurements = locationDataDict[locationCode]; 
                 locationData = locationData.concat(...measurements);
             }
