@@ -78,7 +78,7 @@ export class WaterinfoUtils {
 
 		features.forEach((feature) => {
 			const properties = feature.properties as Waterinfo.WaterinfoProperties;
-			if(properties.measurements.length > 0 && properties.measurements[0].parameterId === parameterQuantity.slug && this.latestMeasurementIsValid(properties.measurements[0])) {
+			if(parameterQuantity && properties.measurements.length > 0 && properties.measurements[0].parameterId === parameterQuantity.slug && this.latestMeasurementIsValid(properties.measurements[0])) {
 				const nMeasurements = properties.measurements.length;
 				const quantityData = {
 					measurement: properties.measurements[0],

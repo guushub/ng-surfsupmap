@@ -16,7 +16,9 @@ import { SurfsupMapLayer } from '../../../surfsup-map/surfsup-map-layer/model/su
 })
 export class WaterinfoLayerComponent implements OnInit {
 
-    private windLocationCodesAllowed = [4529, 4755, 2173, 4807, 1310, 4127, 2719, 4586, 3283, 2721, 2175, 1073, 1617, 1092, 1075, 3905, 4953, 4455, 4864, 4865, 516];
+	private windLocationCodesAllowed = ["K14-platform(K14)","De-Kooy(DEKO)","IJmuiden-Buitenhaven(IJMH)","Lage-Licht(LGL1)","Haringvlietsluizen-sch-1(HVS01)","Cadzand-wind(CAWI)","P11-platform(P11)","Vlieland(VLI1)","Terschelling-Noordzee(TERS)","AWG-platform(AWG)","F3-platform(F3)","Oosterschelde-4(OS4)","D15-platform(D15)"]
+	//"Stavoren(STVO)","Houtribdijk(HOUD)","Wijdenes(WIJD)"
+	//[4529, 4755, 2173, 4807, 1310, 4127, 2719, 4586, 3283, 2721, 2175, 1073, 1617, 1092, 1075, 3905, 4953, 4455, 4864, 4865, 516];
 	private surfsupMapGroupsAllowed = ["golven", "wind", "watertemperatuur", "lucht"];
 
 	private layersAdded: SurfsupMapLayer[] = [];
@@ -42,7 +44,7 @@ export class WaterinfoLayerComponent implements OnInit {
 		this.intializeLayers()
 		.then(() => {
 			//TODO: fix workaround
-			if(this.layersAdded.length <= 2) {
+			if(this.layersAdded.length === 0) {
 				// retry
 				return this.intializeLayers();
 			} 
@@ -222,11 +224,11 @@ export class WaterinfoLayerComponent implements OnInit {
 				const nPars = parameters.length;
 				parameterQuantity = parameters[0];
 	
-				if(parameters.length > 1 && parameters[1].slug === parIdDirection) {
+				if(parameters.length > 1 && parameters[1] && parameters[1].slug === parIdDirection) {
 					parameterDirection = parameters[1]
 				}
 				
-				if(parameters.length > 1 && parameters[nPars - 1].slug === parIdLabel) {
+				if(parameters.length > 1 && parameters[nPars - 1] && parameters[nPars - 1].slug === parIdLabel) {
 					parameterLabel = parameters[nPars - 1]
 				}
 	
@@ -249,7 +251,7 @@ export class WaterinfoLayerComponent implements OnInit {
 			this.getWaterinfoSurfsupMapInput(group, parIdQuantity, parIdDirection, parIdLabel)
 			.then(layerInputs => {
 				if(group.toLowerCase() === "wind") {
-					layerInputs = layerInputs.filter(input => this.windLocationCodesAllowed.indexOf(Number(input.locationCode)) > -1);
+					layerInputs = layerInputs.filter(input => this.windLocationCodesAllowed.indexOf(input.locationCode) > -1);
 				}
 
 				const layer = WaterinfoUtils.getSurfsupMapLayer(layerInputs, isPreset);
