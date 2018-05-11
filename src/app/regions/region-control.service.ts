@@ -2,32 +2,27 @@ import { Injectable, Type } from '@angular/core';
 import { Observable } from "rxjs/Observable";
 import { BehaviorSubject } from 'rxjs';
 import { RegionName } from './model/region-name';
+import { Region } from './model/region';
 
-interface RegionComponent {
-	componentId: string;
-	isActive: boolean;
-	component: Type<{}>;
-	region: RegionName;
-}
 
 @Injectable()
 export class RegionControlService {
 
-	private componentSubject: BehaviorSubject<RegionComponent[]>;
-	regionComponents$: Observable<RegionComponent[]>;
+	private componentSubject: BehaviorSubject<Region[]>;
+	regionComponents$: Observable<Region[]>;
 
 	// To find the component.
-	private regionComponents: RegionComponent[];
+	private regionComponents: Region[];
 	
 
 	constructor() { 
 		this.regionComponents = [];
-		this.componentSubject = new BehaviorSubject<RegionComponent[]>(this.regionComponents);
+		this.componentSubject = new BehaviorSubject<Region[]>(this.regionComponents);
 		this.regionComponents$ = this.componentSubject.asObservable();
 	}
 
-	addComponentToRegion(componentId: string, region: RegionName, component: Type<{}>, isActive = false) {
-		const componentInfo = {componentId: componentId, component: component, region: region, isActive: isActive};
+	addComponentToRegion(componentId: string, region: RegionName, component: Type<{}>, isActive = false, postToggleBehavior?: {(isActive: boolean): void}) {
+		const componentInfo = {componentId: componentId, component: component, region: region, isActive: isActive, postToggleBehavior: postToggleBehavior};
 		this.regionComponents.push(componentInfo);
 		this.componentSubject.next(this.regionComponents);
 	}
@@ -35,16 +30,26 @@ export class RegionControlService {
 	activateComponent(componentId: string, hideOthers = true) {
 		if(hideOthers) {
 			this.regionComponents.forEach(regionComponent => { 
+				let preToggle = regionComponent.isActive;
 				regionComponent.isActive = regionComponent.componentId === componentId;
+				if(preToggle !== regionComponent.isActive && regionComponent.postToggleBehavior) {
+					regionComponent.postToggleBehavior(regionComponent.isActive);
+				}
 			});
 			
 		} else {
 			const regionComponent = this.regionComponents.find(regionComponent => regionComponent.componentId === componentId);
 			if(regionComponent) {
+				let preToggle = regionComponent.isActive;
 				regionComponent.isActive = true;
+				if(preToggle !== regionComponent.isActive && regionComponent.postToggleBehavior) {
+					regionComponent.postToggleBehavior(regionComponent.isActive);
+				}
 			}
 		}
-		console.log(this.regionComponents);
+
+		
+		//console.log(this.regionComponents);
 		this.componentSubject.next(this.regionComponents);
 	}
 
@@ -53,7 +58,6 @@ export class RegionControlService {
 		if(hideRegion) {
 			this.hideRegion(region);
 		}
-		//more
 
 	}
 

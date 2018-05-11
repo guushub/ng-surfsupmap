@@ -8,7 +8,7 @@ import { RegionName } from '../model/region-name';
   templateUrl: './data-region.component.html',
   styleUrls: ['./data-region.component.css']
 })
-export class DataRegionComponent extends RegionComponent<DataRegionDirective>  {
+export class DataRegionComponent extends RegionComponent  {
   name = RegionName.DataRegion;
   
   @ViewChild(DataRegionDirective)

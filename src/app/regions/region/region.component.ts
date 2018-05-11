@@ -12,9 +12,9 @@ import { RegionDirective } from './region.directive';
 	selector: 'app-region',
 	template: ''
 })
-export abstract class RegionComponent<T extends RegionDirective> implements OnInit, OnDestroy {
+export class RegionComponent implements OnInit, OnDestroy {
 	// export class RegionComponent<T extends RegionDirective> implements OnInit, OnDestroy {
-	abstract name: RegionName;
+	name: RegionName;
 	isActive: boolean = true;
 	components: {[componentId: string]: Type<{}> }
 	private componentSubscription: Subscription;
@@ -66,5 +66,9 @@ export abstract class RegionComponent<T extends RegionDirective> implements OnIn
 		viewContainerRef.clear();
 		let componentRef = viewContainerRef.createComponent(componentFactory);
 	  }
+
+	postToggleBehavior() {
+		console.log("Toggle...");
+	}
 
 }

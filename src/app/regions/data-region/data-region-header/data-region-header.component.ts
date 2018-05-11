@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MapService } from '../../../leaflet/map/service/map.service';
+import { RegionControlService } from '../../region-control.service';
 
 @Component({
   selector: 'app-data-region-header',
@@ -8,14 +9,15 @@ import { MapService } from '../../../leaflet/map/service/map.service';
 })
 export class DataRegionHeaderComponent implements OnInit {
 
-  constructor(private mapService: MapService) { }
+  constructor(private mapService: MapService, private regionControlService: RegionControlService) { }
 
   ngOnInit() {
 
   }
 
   showMap() {
-		this.mapService.hide.emit(false)
+    this.regionControlService.activateComponent("MapComponent");
+		// this.mapService.hide.emit(false)
   }
   
 }

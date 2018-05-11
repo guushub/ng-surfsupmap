@@ -1,4 +1,4 @@
-<div class="data-region" *ngIf="isActive">
+<div class="data-region" [hidden]="!isActive">
   <app-data-region-header></app-data-region-header>
   <div appDataRegion></div>
 </div>

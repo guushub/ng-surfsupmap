@@ -19,7 +19,6 @@ import { MapComponent } from './leaflet/map/component/map/map.component';
 	styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-	hideMap = false;
 
 	constructor(private mapService: MapService, private regionControlService: RegionControlService) {
 		
@@ -33,12 +32,22 @@ export class AppComponent {
 			
 		});
 
-		this.regionControlService.addComponentToRegion("MapComponent", RegionName.MapRegion, MapComponent, true);
+		this.regionControlService.addComponentToRegion("MapComponent", RegionName.MapRegion, MapComponent, true, (isActive: boolean) => {
+			// TODO: this should be in the component's behavior.
+			setTimeout(() => {
+				if(!isActive) {
+					this.mapService.map.remove()
+				}
+				
+				if(isActive) {
+					//TODO: this should also restore the earlier added layers, not just restore the initial situation.
+					this.mapService.resetView();
+					this.mapService.map.invalidateSize();
+				  }
+			  }, 0);
+		});
 		this.regionControlService.addComponentToRegion("WaterinfoRawComponent", RegionName.DataRegion, WaterinfoRawComponent);
 
-		this.mapService.hide.subscribe((hide) => {
-			this.hideMap = hide;
-		  });
 	}
 
 }
