@@ -12,6 +12,7 @@ import { RegionName } from './regions/model/region-name';
 import { WaterinfoRawComponent } from './waterinfo/component/waterinfo-raw/waterinfo-raw.component';
 import { DummyComponent } from './dummy/dummy.component';
 import { MapComponent } from './leaflet/map/component/map/map.component';
+import { WaterinfoLoadingComponent } from './waterinfo/component/waterinfo-loading/waterinfo-loading.component';
 
 @Component({
 	selector: 'app-root',
@@ -29,6 +30,7 @@ export class AppComponent {
 		this.mapService.onLoad.subscribe((map: L.Map) => {
 			this.mapService.injectComponentToControl(WaterinfoLayerComponent, "topleft");
 			this.mapService.injectComponentToControl(WaterinfoRawControlComponent, "topleft");
+			this.mapService.injectComponentToControl(WaterinfoLoadingComponent, "topright");
 			
 		});
 

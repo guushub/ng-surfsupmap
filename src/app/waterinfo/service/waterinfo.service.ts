@@ -8,14 +8,23 @@ import { environment } from 'environments/environment';
 
 import * as Waterinfo from '../model/waterinfo';
 import { WaterinfoUtils } from '../helper/waterinfo-utils';
+import { BehaviorSubject } from 'rxjs/Rx';
 
 @Injectable()
 export class WaterinfoService {
 
     private groups: Observable<Waterinfo.WaterinfoGroup[]>;
     
+    //TODO: move to a status service
+    private isLoadingSource = new BehaviorSubject<boolean>(false);
+    isCurrentlyLoading = this.isLoadingSource.asObservable();
+
     constructor(private http: HttpClient) {
 
+    }
+
+    isLoading(isLoading: boolean) {
+        this.isLoadingSource.next(isLoading);
     }
 
     getGroups(): Observable<Waterinfo.WaterinfoGroup[]> {

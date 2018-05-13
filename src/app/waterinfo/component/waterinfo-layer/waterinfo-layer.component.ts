@@ -218,6 +218,8 @@ export class WaterinfoLayerComponent implements OnInit {
 			const parIdsToFetch = [parIdQuantity, parIdDirection, parIdLabel].filter(par => !!par);
 			this.waterinfoService.getParametersCombined(parIdsToFetch).toPromise()
 				.then(parameters => {
+					this.waterinfoService.isLoading(true);
+
 					if (!parameters) {
 						return;
 					}
@@ -243,9 +245,11 @@ export class WaterinfoLayerComponent implements OnInit {
 				})
 				.then(featureCollection => {
 					const inputs = WaterinfoUtils.featureCollectionToWaterinfoSurfsupMapInputs(group, featureCollection, parameterQuantity, parameterDirection, parameterLabel);
+					this.waterinfoService.isLoading(false);
 					resolve(inputs);
 				})
 				.catch((error) => {
+					this.waterinfoService.isLoading(false);
 					reject(error);
 				});
 		});

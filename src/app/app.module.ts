@@ -35,6 +35,7 @@ import { RegionDirective } from './regions/region/region.directive';
 import { RegionControlService } from './regions/region-control.service';
 import { DummyComponent } from './dummy/dummy.component';
 import { MapRegionDirective } from './regions/map-region/directive/map-region.directive';
+import { WaterinfoLoadingComponent } from './waterinfo/component/waterinfo-loading/waterinfo-loading.component';
 
 
 @NgModule({
@@ -45,6 +46,7 @@ import { MapRegionDirective } from './regions/map-region/directive/map-region.di
         WaterinfoLayerComponent,
         WaterinfoRawComponent,
         WaterinfoRawControlComponent,
+        WaterinfoLoadingComponent,
         MapRegionComponent,
         DataRegionComponent,
         DataRegionHeaderComponent,
@@ -77,6 +79,7 @@ import { MapRegionDirective } from './regions/map-region/directive/map-region.di
         WaterinfoLayerComponent,
         WaterinfoRawControlComponent,
         WaterinfoRawComponent,
+        WaterinfoLoadingComponent,
         DummyComponent
     ],
     bootstrap: [AppComponent]
