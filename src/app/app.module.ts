@@ -27,13 +27,13 @@ import { MatTableModule, MatInputModule, MatProgressSpinnerModule } from "@angul
 import { SurfsupMapLayerService } from './surfsup-map/surfsup-map-layer/service/surfsup-map-layer.service';
 import { SurfsupMapIconService } from './surfsup-map/surfsup-map-icon/service/surfsup-map-icon.service';
 import { SurfsupMapPopupComponent } from './surfsup-map/surfsup-map-popup/component/surfsup-map-popup.component';
+import { RegionComponent } from './regions/region/region.component';
 import { MapRegionComponent } from './regions/map-region/map-region.component';
 import { DataRegionComponent } from './regions/data-region/data-region.component';
 import { DataRegionHeaderComponent } from './regions/data-region/data-region-header/data-region-header.component';
 import { DataRegionDirective } from './regions/data-region/directive/data-region.directive';
 import { RegionDirective } from './regions/region/region.directive';
 import { RegionControlService } from './regions/region-control.service';
-import { DummyComponent } from './dummy/dummy.component';
 import { MapRegionDirective } from './regions/map-region/directive/map-region.directive';
 import { WaterinfoLoadingComponent } from './waterinfo/component/waterinfo-loading/waterinfo-loading.component';
 
@@ -48,11 +48,11 @@ import { WaterinfoLoadingComponent } from './waterinfo/component/waterinfo-loadi
         WaterinfoRawControlComponent,
         WaterinfoLoadingComponent,
         MapRegionComponent,
+        RegionComponent,
         DataRegionComponent,
         DataRegionHeaderComponent,
         DataRegionDirective,
         RegionDirective,
-        DummyComponent,
         MapRegionDirective
     ],
     imports: [
@@ -79,8 +79,7 @@ import { WaterinfoLoadingComponent } from './waterinfo/component/waterinfo-loadi
         WaterinfoLayerComponent,
         WaterinfoRawControlComponent,
         WaterinfoRawComponent,
-        WaterinfoLoadingComponent,
-        DummyComponent
+        WaterinfoLoadingComponent
     ],
     bootstrap: [AppComponent]
 })

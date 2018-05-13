@@ -10,7 +10,6 @@ import { WaterinfoRawControlComponent } from './waterinfo/component/waterinfo-ra
 import { RegionControlService } from './regions/region-control.service';
 import { RegionName } from './regions/model/region-name';
 import { WaterinfoRawComponent } from './waterinfo/component/waterinfo-raw/waterinfo-raw.component';
-import { DummyComponent } from './dummy/dummy.component';
 import { MapComponent } from './leaflet/map/component/map/map.component';
 import { WaterinfoLoadingComponent } from './waterinfo/component/waterinfo-loading/waterinfo-loading.component';
 
