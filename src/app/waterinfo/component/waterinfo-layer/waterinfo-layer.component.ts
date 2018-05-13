@@ -55,8 +55,6 @@ export class WaterinfoLayerComponent implements OnInit {
 
 	}
 
-
-
 	intializeLayers() {
 		if (this.layersAdded) {
 			this.layersAdded.forEach((lyr) => {
