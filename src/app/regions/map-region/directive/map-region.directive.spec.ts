@@ -1,8 +1,10 @@
 import { MapRegionDirective } from './map-region.directive';
+import { ViewContainerRef } from '@angular/core';
 
 describe('MapRegionDirective', () => {
   it('should create an instance', () => {
-    const directive = new MapRegionDirective();
+    let viewContainerRef: ViewContainerRef;
+    const directive = new MapRegionDirective(viewContainerRef);
     expect(directive).toBeTruthy();
   });
 });

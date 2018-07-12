@@ -29,10 +29,13 @@ export class RegionComponent implements OnInit, OnDestroy {
 		this.componentSubscription = this.regionControlService.regionComponents$
 			 .subscribe(regionComponents => {
 				const regionComponent = regionComponents.find(regionComponent => regionComponent.region === this.name);
-				if(regionComponent) {
+				if(!regionComponent) {
+					return;
+				}
+				//if(regionComponent) {
 					this.isActive = regionComponent.isActive;
 					this.addBodyComponent(regionComponent.componentId, regionComponent.component);
-				}
+				//}
 
 				if(this.isActive) {
 					this.loadBodyComponent(regionComponent.componentId);

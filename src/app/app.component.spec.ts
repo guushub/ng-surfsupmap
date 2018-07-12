@@ -11,6 +11,7 @@ import { MapComponent } from './leaflet/map/component/map/map.component';
 import { WaterinfoRawComponent } from './waterinfo/component/waterinfo-raw/waterinfo-raw.component';
 import { DataRegionHeaderComponent } from './regions/data-region/data-region-header/data-region-header.component';
 import { MatProgressSpinnerModule, MatTableModule, MatInputModule } from '@angular/material';
+import { RegionControlService } from './regions/region-control.service';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
@@ -20,7 +21,7 @@ describe('AppComponent', () => {
         AppComponent, MapRegionComponent, DataRegionComponent, 
         MapComponent, WaterinfoRawComponent, DataRegionHeaderComponent
       ],
-      providers: [MapService, WaterinfoService]
+      providers: [MapService, WaterinfoService, RegionControlService]
     }).compileComponents();
   }));
 

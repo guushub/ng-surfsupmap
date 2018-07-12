@@ -1,8 +1,10 @@
 import { RegionDirective } from './region.directive';
+import { ViewContainerRef } from '@angular/core';
 
 describe('RegionDirective', () => {
   it('should create an instance', () => {
-    const directive = new RegionDirective();
+    let viewContainerRef: ViewContainerRef;
+    const directive = new RegionDirective(viewContainerRef);
     expect(directive).toBeTruthy();
   });
 });

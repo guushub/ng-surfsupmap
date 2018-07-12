@@ -7,6 +7,7 @@ import { MapService } from '../../leaflet/map/service/map.service';
 import { HttpClientModule } from '@angular/common/http';
 import { DataRegionHeaderComponent } from './data-region-header/data-region-header.component';
 import { MatInputModule, MatProgressSpinnerModule, MatTableModule } from '@angular/material';
+import { RegionControlService } from '../region-control.service';
 
 describe('DataRegionComponent', () => {
   let component: DataRegionComponent;
@@ -16,7 +17,7 @@ describe('DataRegionComponent', () => {
     TestBed.configureTestingModule({
       imports: [HttpClientModule, MatProgressSpinnerModule, MatTableModule, MatInputModule],
       declarations: [ DataRegionComponent, WaterinfoRawComponent, DataRegionHeaderComponent],
-      providers: [MapService, WaterinfoService]
+      providers: [RegionControlService, MapService, WaterinfoService]
     })
     .compileComponents();
   }));

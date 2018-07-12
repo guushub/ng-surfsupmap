@@ -2,6 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DataRegionHeaderComponent } from './data-region-header.component';
 import { MapService } from '../../../leaflet/map/service/map.service';
+import { RegionControlService } from '../../region-control.service';
 
 describe('DataRegionHeaderComponent', () => {
   let component: DataRegionHeaderComponent;
@@ -10,7 +11,7 @@ describe('DataRegionHeaderComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ DataRegionHeaderComponent ],
-      providers: [MapService]
+      providers: [MapService, RegionControlService]
     })
     .compileComponents();
   }));

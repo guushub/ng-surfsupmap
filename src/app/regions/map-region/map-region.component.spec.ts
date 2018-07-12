@@ -3,6 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MapRegionComponent } from './map-region.component';
 import { MapComponent } from '../../leaflet/map/component/map/map.component';
 import { MapService } from '../../leaflet/map/service/map.service';
+import { RegionControlService } from '../region-control.service';
 
 describe('MapRegionComponent', () => {
   let component: MapRegionComponent;
@@ -11,7 +12,7 @@ describe('MapRegionComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ MapRegionComponent, MapComponent ],
-      providers: [MapService]
+      providers: [MapService, RegionControlService]
     })
     .compileComponents();
   }));
