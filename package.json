@@ -9,6 +9,7 @@
     "test": "ng test --sourcemaps=false",
     "lint": "ng lint",
     "e2e": "ng e2e",
+    "serve:local": "ng serve -e local",
     "build:staging": "ng build --prod --base-href /surfsupmap-test/",
     "build:live": "ng build --prod --base-href /surfsupmap/"
   },
